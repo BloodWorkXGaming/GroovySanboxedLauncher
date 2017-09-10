@@ -1,0 +1,15 @@
+apply plugin: 'idea'
+apply plugin: 'java'
+
+repositories {
+    mavenCentral()
+
+    maven {
+        url "https://mvnrepository.com/artifact"
+    }
+}
+
+dependencies {
+    // https://mvnrepository.com/artifact/org.kohsuke/groovy-sandbox
+    compile group: 'org.kohsuke', name: 'groovy-sandbox', version: '1.15'
+}
