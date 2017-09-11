@@ -2,6 +2,7 @@ package de.bloodworkxgaming.groovysandboxedlauncher.Sandbox;
 
 import de.bloodworkxgaming.groovysandboxedlauncher.annotations.GSLWhitelistMember;
 import de.bloodworkxgaming.groovysandboxedlauncher.annotations.GSLWhitelistClass;
+import groovy.lang.Script;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;

@@ -9,10 +9,12 @@ import static de.bloodworkxgaming.groovysandboxedlauncher.Sandbox.GroovySandboxe
 @CompileStatic
 @SuppressWarnings("UnnecessaryQualifiedReference")
 class CustomValueFilter extends GroovyValueFilter{
-    WhitelistRegistry whitelistRegistry
+    private WhitelistRegistry whitelistRegistry
+    private FunctionKnower functionKnower
 
-    CustomValueFilter(WhitelistRegistry whitelistRegistry) {
+    CustomValueFilter(WhitelistRegistry whitelistRegistry, FunctionKnower functionKnower) {
         this.whitelistRegistry = whitelistRegistry
+        this.functionKnower = functionKnower
     }
 
     @Override
@@ -38,7 +40,7 @@ class CustomValueFilter extends GroovyValueFilter{
 
     }
 
-    @Override //TODO: whitelist methods which are in the own script
+    @Override
     Object onMethodCall(GroovyInterceptor.Invoker invoker, Object receiver, String method, Object... args) throws Throwable {
         if (DEBUG) println("[METHOD] ${receiver.getClass().getName()}.${method.toString()}(${Arrays.toString(args)})")
 
@@ -62,9 +64,17 @@ class CustomValueFilter extends GroovyValueFilter{
 
     @Override
     Object onGetProperty(GroovyInterceptor.Invoker invoker, Object receiver, String property) throws Throwable {
-        if (DEBUG) println("[PROPERTY GET] ${receiver.getClass().getName()} : $property")
+        Class<?> clazz
+        if (receiver instanceof Class<?>){
+            clazz = receiver as Class<?>
+        } else {
+            clazz = receiver.getClass()
+        }
 
-        if (whitelistRegistry.isFieldWhitelisted(receiver.getClass(), property) || AnnotationManager.checkHasFieldAnnotation(receiver.getClass(), property)){
+        if (DEBUG) println("[PROPERTY GET] ${clazz} : $property")
+
+
+        if (whitelistRegistry.isFieldWhitelisted(clazz, property) || AnnotationManager.checkHasFieldAnnotation(clazz, property)){
             return super.onGetProperty(invoker, receiver, property)
         }else {
             throw new SecurityException("get property ${receiver.getClass().getName()}.$property is not allowed to be called")

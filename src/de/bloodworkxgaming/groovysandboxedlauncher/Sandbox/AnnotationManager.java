@@ -27,7 +27,7 @@ public class AnnotationManager {
 
     public static boolean checkHasFieldAnnotation(Class<?> clazz, String fieldName){
         try {
-            Field field = clazz.getField(fieldName);
+            Field field = clazz.getDeclaredField(fieldName);
             return field.isAnnotationPresent(GSLWhitelistMember.class);
         } catch (NoSuchFieldException e) {
             return false;

@@ -13,8 +13,10 @@ println FileUtils.test("blib");
 
 blub("lalal");
 
+def testFile = new TeCla("blub")
 
-
+// println testBlub.blaTest
+println TestClassGroovy.testInt
 // println String.valueOf(20)
 
 // def f = new File("D:\\Users\\jonas\\Documents\\GitHub\\GroovySanboxedLauncher\\test\\groovyScripts\\testscr.groovy")
@@ -22,4 +24,16 @@ blub("lalal");
 
 def blub (String bla){
     println "I print $bla"
+}
+
+
+class TeCla{
+    TeCla(){
+        println "default"
+    }
+
+    TeCla(String s) {
+        println "hi i am a constructor $s"
+    }
+    static int testInt = 20
 }
