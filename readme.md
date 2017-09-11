@@ -1,7 +1,6 @@
 # GroovySandboxLauncher
 
 ## TODO
-- Annotations
 - Possibly language transformers
 - configurable binding
 - custom CompilerCustomizers
@@ -15,3 +14,5 @@
   - constructor calls
   - objects to exist
 - invertible whitelist -> blacklist
+- Annotations
+- Add mixins

@@ -1,5 +1,10 @@
 package de.bloodworkxgaming.groovysandboxedlauncher.Sandbox;
 
+import de.bloodworkxgaming.groovysandboxedlauncher.annotations.GSLWhitelistMember;
+import de.bloodworkxgaming.groovysandboxedlauncher.annotations.GSLWhitelistClass;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.*;
 
 public class WhitelistRegistry {
@@ -20,7 +25,7 @@ public class WhitelistRegistry {
      * @param methodName method that should be allowed
      *                   To allow any method from that class register it as a '*'
      */
-    public void registerMethod(Class clazz, String methodName){
+    public void registerMethod(Class<?> clazz, String methodName){
         Set<String> functions = allowedFunctions.getOrDefault(clazz.getName(), new HashSet<>());
         functions.add(methodName);
 
@@ -48,7 +53,7 @@ public class WhitelistRegistry {
     /**
      * Checks whether the given class and method is registered
      */
-    public boolean isMethodWhitelisted(Class clazz, String methodName) {
+    public boolean isMethodWhitelisted(Class<?> clazz, String methodName) {
         if (clazz == null) return invertMethodWhitelist; // false
 
         Set<String> functions = allowedFunctions.get(clazz.getName());
@@ -72,7 +77,7 @@ public class WhitelistRegistry {
     /**
      * Registers the Constructor call for a specific Class
      */
-    public void registerConstructorCall(Class... classes){
+    public void registerConstructorCall(Class<?>... classes){
         for (Class aClass : classes) {
             allowedConstructorCalls.add(aClass.getName());
         }
@@ -88,7 +93,7 @@ public class WhitelistRegistry {
     /**
      * Checks whether the given Class is whitelisted
      */
-    public boolean isConstructorWhitelisted(Class clazz){
+    public boolean isConstructorWhitelisted(Class<?> clazz){
         return invertConstructorWhitelist != allowedConstructorCalls.contains(clazz.getName());
     }
     //endregion
@@ -97,7 +102,7 @@ public class WhitelistRegistry {
     /**
      * Allows this Object to exist at all
      */
-    public void registerObjectExistence(Class... classes){
+    public void registerObjectExistence(Class<?>... classes){
         for (Class aClass : classes) {
             allowedObjectExistence.add(aClass.getName());
         }
@@ -113,7 +118,7 @@ public class WhitelistRegistry {
     /**
      * Checks whether the given Class is whitelisted
      */
-    public boolean isObjectExistenceWhitelisted(Class clazz){
+    public boolean isObjectExistenceWhitelisted(Class<?> clazz){
         return (invertObjectWhitelist != (clazz != null && allowedObjectExistence.contains(clazz.getName())));
     }
     //endregion
@@ -125,7 +130,7 @@ public class WhitelistRegistry {
      * @param fieldName field that should be allowed
      *                  To allow any field from that class register it as a '*'
      */
-    public void registerField(Class clazz, String fieldName){
+    public void registerField(Class<?> clazz, String fieldName){
         Set<String> fields = allowedFields.getOrDefault(clazz.getName(), new HashSet<>());
         fields.add(fieldName);
 
@@ -153,7 +158,7 @@ public class WhitelistRegistry {
     /**
      * Checks whether the given class and Field is registered
      */
-    public boolean isFieldWhitelisted(Class clazz, String fieldName) {
+    public boolean isFieldWhitelisted(Class<?> clazz, String fieldName) {
         if (clazz == null) return invertFieldWhitelist; // false
 
         Set<String> fields = allowedFields.get(clazz.getName());
@@ -163,7 +168,7 @@ public class WhitelistRegistry {
 
         if (isFieldWhitelisted(clazz.getSuperclass(), fieldName)) return !invertFieldWhitelist; // true
 
-        for (Class interfaceClass : clazz.getInterfaces()) {
+        for (Class<?> interfaceClass : clazz.getInterfaces()) {
             if (isFieldWhitelisted(interfaceClass, fieldName)){
                 return !invertFieldWhitelist; // true
             }
@@ -173,6 +178,7 @@ public class WhitelistRegistry {
     }
     //endregion
 
+    //region >>>> Whitelist -> Blacklist Inverter
     public void invertMethodWhitelist() { this.invertMethodWhitelist = true; }
 
     public void invertConstructorWhitelist() { this.invertConstructorWhitelist = true; }
@@ -188,5 +194,10 @@ public class WhitelistRegistry {
     public boolean isInvertedObjectWhitelist() { return invertObjectWhitelist; }
 
     public boolean isInvertedFieldWhitelist() { return invertFieldWhitelist; }
+    //endregion
 
+    public void registerAllMethodsAndFields(Class clazz){
+        registerMethod(clazz, "*");
+        registerField(clazz, "*");
+    }
 }

@@ -1,5 +1,7 @@
 package de.bloodworkxgaming.groovysandboxedlauncher.utils;
 
+import de.bloodworkxgaming.groovysandboxedlauncher.annotations.GSLWhitelistMember;
+
 import java.io.File;
 
 public class FileUtils {
@@ -16,6 +18,7 @@ public class FileUtils {
         return getExtension(file).equals(extension);
     }
 
+    @GSLWhitelistMember
     public static String test(String bla){
         return bla.replace("l", "blub");
     }

@@ -26,13 +26,14 @@ import java.util.Objects;
  */
 
 public class GroovySandboxedLauncher {
-    public static boolean DEBUG = true;
+    public static boolean DEBUG = false;
 
     private HashMap<ExtractedMethod, List<Script>> functionKnower = new HashMap<>();
 
     public WhitelistRegistry whitelistRegistry = new WhitelistRegistry();
     public ScriptPathConfig scriptPathConfig = new ScriptPathConfig();
     public ImportModifier importModifier = new ImportModifier();
+    public LaunchWrapper launchWrapper = new LaunchWrapper();
 
 
     private ArrayList<Script> scripts = new ArrayList<>();
@@ -50,7 +51,7 @@ public class GroovySandboxedLauncher {
 
             new CustomValueFilter(whitelistRegistry).register();
 
-            LaunchWrapper.init();
+            launchWrapper.init();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -148,7 +149,7 @@ public class GroovySandboxedLauncher {
             for (Script script : functionKnower.get(extractedMethod)) {
 
                 try {
-                    LaunchWrapper.run(script);
+                    launchWrapper.run(script);
 
                 } catch (MultipleCompilationErrorsException e) {
                     System.out.println("Successful sandboxing: " + e.getMessage());
@@ -170,7 +171,7 @@ public class GroovySandboxedLauncher {
 
             for (Script script : functionKnower.get(extractedMethod)) {
                 try {
-                    LaunchWrapper.invokeMethod(script, name, args);
+                    launchWrapper.invokeMethod(script, name, args);
 
                 } catch (GroovyBugError e) {
                     System.out.println(script.toString() + " couldn't run function [" + name + "] due to \n" + e.getMessage());
