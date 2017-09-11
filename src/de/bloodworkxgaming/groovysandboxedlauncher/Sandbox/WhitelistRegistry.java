@@ -4,10 +4,12 @@ import java.util.*;
 
 public class WhitelistRegistry {
     private boolean invertMethodWhitelist = false;
+    private boolean invertFieldWhitelist = false;
     private boolean invertConstructorWhitelist = false;
     private boolean invertObjectWhitelist = false;
 
     private Map<String, Set<String>> allowedFunctions = new HashMap<>();
+    private Map<String, Set<String>> allowedFields = new HashMap<>();
     private Set<String> allowedConstructorCalls = new HashSet<>();
     private Set<String> allowedObjectExistence = new HashSet<>();
 
@@ -116,9 +118,75 @@ public class WhitelistRegistry {
     }
     //endregion
 
+    //region >>>> Field Whitelist
+    /** register the class and the field name
+     *
+     * @param clazz Class that should be registered
+     * @param fieldName field that should be allowed
+     *                  To allow any field from that class register it as a '*'
+     */
+    public void registerField(Class clazz, String fieldName){
+        Set<String> fields = allowedFields.getOrDefault(clazz.getName(), new HashSet<>());
+        fields.add(fieldName);
+
+        allowedFields.put(clazz.getName(), fields);
+    }
+
+    /**
+     * Register fields as string (if it is not present in the current classpath)
+     * Skips any wrongly formatted entries
+     * @param fields Identifier of the Mathod 'classname#fieldName'
+     *               FieldName can be '*' for any
+     */
+    public void registerFields(String... fields){
+        for (String field : fields) {
+            String[] split = field.split("#");
+            if (split.length == 2){
+                Set<String> fieldNames = allowedFields.getOrDefault(split[0], new HashSet<>());
+                fieldNames.add(split[1]);
+
+                allowedFields.put(split[0], fieldNames);
+            }
+        }
+    }
+
+    /**
+     * Checks whether the given class and Field is registered
+     */
+    public boolean isFieldWhitelisted(Class clazz, String fieldName) {
+        if (clazz == null) return invertFieldWhitelist; // false
+
+        Set<String> fields = allowedFields.get(clazz.getName());
+        if (fields != null && (fields.contains(fieldName)|| fields.contains("*"))){
+            return !invertFieldWhitelist; // true
+        }
+
+        if (isFieldWhitelisted(clazz.getSuperclass(), fieldName)) return !invertFieldWhitelist; // true
+
+        for (Class interfaceClass : clazz.getInterfaces()) {
+            if (isFieldWhitelisted(interfaceClass, fieldName)){
+                return !invertFieldWhitelist; // true
+            }
+        }
+
+        return invertFieldWhitelist; // false
+    }
+    //endregion
+
     public void invertMethodWhitelist() { this.invertMethodWhitelist = true; }
 
     public void invertConstructorWhitelist() { this.invertConstructorWhitelist = true; }
 
     public void invertObjectWhitelist() { this.invertObjectWhitelist = true; }
+
+    public void invertFieldWhitelist() { this.invertFieldWhitelist = true; }
+
+    public boolean isInvertedMethodWhitelist() { return invertMethodWhitelist; }
+
+    public boolean isInvertedConstructorWhitelist() { return invertConstructorWhitelist; }
+
+    public boolean isInvertedObjectWhitelist() { return invertObjectWhitelist; }
+
+    public boolean isInvertedFieldWhitelist() { return invertFieldWhitelist; }
+
 }

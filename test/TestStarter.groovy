@@ -1,4 +1,5 @@
 import de.bloodworkxgaming.groovysandboxedlauncher.Sandbox.GroovySandboxedLauncher
+import de.bloodworkxgaming.groovysandboxedlauncher.defaults.WhitelistDefaults
 import org.junit.Test
 
 class TestStarter {
@@ -9,10 +10,11 @@ class TestStarter {
         sandbox.with {
             scriptPathConfig.registerScriptPathRoots("D:\\Users\\jonas\\Documents\\GitHub\\GroovySanboxedLauncher\\test\\groovyScripts")
 
-            whitelistRegistry.registerMethod(Script.class, "println")
-            whitelistRegistry.registerMethod(ArrayList.class, "toArray")
+            WhitelistDefaults.registerWhitelistMethodDefaults(whitelistRegistry)
 
             whitelistRegistry.invertObjectWhitelist()
+            // whitelistRegistry.invertConstructorWhitelist()
+            // whitelistRegistry.invertMethodWhitelist()
 
             importModifier.addStaticStars("java.lang.Math")
             // importModifier.addStarImports("java.lang.Object")

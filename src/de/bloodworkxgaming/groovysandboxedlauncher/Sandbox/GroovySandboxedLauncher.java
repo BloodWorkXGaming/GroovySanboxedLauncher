@@ -40,7 +40,8 @@ public class GroovySandboxedLauncher {
     private Binding binding;
 
     public void initSandbox() {
-        whitelistRegistry.registerMethod(Checker.class, "*");
+        if (!whitelistRegistry.isInvertedMethodWhitelist()) whitelistRegistry.registerMethod(Checker.class, "*");
+
         binding = new Binding();
 
         try {
