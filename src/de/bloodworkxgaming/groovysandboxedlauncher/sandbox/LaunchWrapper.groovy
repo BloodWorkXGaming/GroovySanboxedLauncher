@@ -1,4 +1,4 @@
-package de.bloodworkxgaming.groovysandboxedlauncher.Sandbox
+package de.bloodworkxgaming.groovysandboxedlauncher.sandbox
 
 /**
  * This class provides a wrapper around the launched scripts.

@@ -1,11 +1,11 @@
-package de.bloodworkxgaming.groovysandboxedlauncher.Sandbox
+package de.bloodworkxgaming.groovysandboxedlauncher.sandbox
 
 import de.bloodworkxgaming.groovysandboxedlauncher.utils.StringUtils
 import groovy.transform.CompileStatic
 import org.kohsuke.groovy.sandbox.GroovyInterceptor
 import org.kohsuke.groovy.sandbox.GroovyValueFilter
 
-import static de.bloodworkxgaming.groovysandboxedlauncher.Sandbox.GroovySandboxedLauncher.DEBUG
+import static de.bloodworkxgaming.groovysandboxedlauncher.sandbox.GroovySandboxedLauncher.DEBUG
 
 @CompileStatic
 @SuppressWarnings("UnnecessaryQualifiedReference")

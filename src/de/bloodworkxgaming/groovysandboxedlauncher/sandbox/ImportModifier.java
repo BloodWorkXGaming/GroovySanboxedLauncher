@@ -1,10 +1,10 @@
-package de.bloodworkxgaming.groovysandboxedlauncher.Sandbox;
+package de.bloodworkxgaming.groovysandboxedlauncher.sandbox;
 
 import org.codehaus.groovy.control.customizers.ImportCustomizer;
 
 import java.lang.reflect.Field;
 
-import static de.bloodworkxgaming.groovysandboxedlauncher.Sandbox.GroovySandboxedLauncher.DEBUG;
+import static de.bloodworkxgaming.groovysandboxedlauncher.sandbox.GroovySandboxedLauncher.DEBUG;
 
 public class ImportModifier {
     private ImportCustomizer importCustomizer = new ImportCustomizer();

@@ -1,4 +1,4 @@
-package de.bloodworkxgaming.groovysandboxedlauncher.Sandbox;
+package de.bloodworkxgaming.groovysandboxedlauncher.sandbox;
 
 import groovy.lang.MetaMethod;
 import groovy.lang.Script;

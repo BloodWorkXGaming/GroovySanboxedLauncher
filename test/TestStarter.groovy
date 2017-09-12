@@ -1,4 +1,4 @@
-import de.bloodworkxgaming.groovysandboxedlauncher.Sandbox.GroovySandboxedLauncher
+import de.bloodworkxgaming.groovysandboxedlauncher.sandbox.GroovySandboxedLauncher
 import de.bloodworkxgaming.testclasses.StringMixin
 import de.bloodworkxgaming.groovysandboxedlauncher.defaults.WhitelistDefaults
 import org.junit.Test

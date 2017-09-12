@@ -1,6 +1,6 @@
 package de.bloodworkxgaming.groovysandboxedlauncher.defaults
 
-import de.bloodworkxgaming.groovysandboxedlauncher.Sandbox.WhitelistRegistry
+import de.bloodworkxgaming.groovysandboxedlauncher.sandbox.WhitelistRegistry
 
 class WhitelistDefaults {
     static void registerWhitelistMethodDefaults(WhitelistRegistry registry) {
@@ -12,7 +12,6 @@ class WhitelistDefaults {
             registerMethod(Script.class, "printf")
 
             registerMethod(GroovyObject.class, "println")
-            //TODO: Handle mixins better, as this is just a freepass to any class that has a print method
             registerMethod(GroovyObject.class, "print")
             registerMethod(GroovyObject.class, "printf")
 
