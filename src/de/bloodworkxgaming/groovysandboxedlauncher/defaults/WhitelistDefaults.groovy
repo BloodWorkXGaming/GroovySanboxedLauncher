@@ -1,10 +1,9 @@
 package de.bloodworkxgaming.groovysandboxedlauncher.defaults
 
 import de.bloodworkxgaming.groovysandboxedlauncher.Sandbox.WhitelistRegistry
-import org.codehaus.groovy.runtime.DefaultGroovyMethods
 
 class WhitelistDefaults {
-    static void registerWhitelistMethodDefaults(WhitelistRegistry registry){
+    static void registerWhitelistMethodDefaults(WhitelistRegistry registry) {
 
         registry.with {
             // ------------- Script natives ------------------
@@ -12,7 +11,8 @@ class WhitelistDefaults {
             registerMethod(Script.class, "print")
             registerMethod(Script.class, "printf")
 
-            registerMethod(GroovyObject.class, "println") //TODO: Handle mixins better, as this is just a freepass to any class that has a print method
+            registerMethod(GroovyObject.class, "println")
+            //TODO: Handle mixins better, as this is just a freepass to any class that has a print method
             registerMethod(GroovyObject.class, "print")
             registerMethod(GroovyObject.class, "printf")
 

@@ -1,4 +1,4 @@
-package de.bloodworkxgaming.groovysandboxedlauncher.defaults
+package de.bloodworkxgaming.testclasses
 
 /**
  * Created by jonas on 05.06.2017.

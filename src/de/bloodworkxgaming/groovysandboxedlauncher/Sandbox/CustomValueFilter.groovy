@@ -1,6 +1,5 @@
 package de.bloodworkxgaming.groovysandboxedlauncher.Sandbox
 
-import de.bloodworkxgaming.groovysandboxedlauncher.utils.FileUtils
 import de.bloodworkxgaming.groovysandboxedlauncher.utils.StringUtils
 import groovy.transform.CompileStatic
 import org.kohsuke.groovy.sandbox.GroovyInterceptor
@@ -10,7 +9,7 @@ import static de.bloodworkxgaming.groovysandboxedlauncher.Sandbox.GroovySandboxe
 
 @CompileStatic
 @SuppressWarnings("UnnecessaryQualifiedReference")
-class CustomValueFilter extends GroovyValueFilter{
+class CustomValueFilter extends GroovyValueFilter {
     public boolean enableImplicitPropertySupport = true
 
     private WhitelistRegistry whitelistRegistry
@@ -25,9 +24,9 @@ class CustomValueFilter extends GroovyValueFilter{
     Object filter(Object o) {
         if (DEBUG) println("[OBJECT] ${o?.getClass()?.getName()}")
 
-        if (whitelistRegistry.isObjectExistenceWhitelisted(o?.getClass()) || AnnotationManager.checkHasClassAnnotation(o.getClass())){
+        if (whitelistRegistry.isObjectExistenceWhitelisted(o?.getClass()) || AnnotationManager.checkHasClassAnnotation(o.getClass())) {
             return super.filter(o)
-        }else {
+        } else {
             throw new SecurityException("Object $o of type ${o?.getClass()?.getName()} is not allowed to exist")
         }
     }
@@ -36,9 +35,9 @@ class CustomValueFilter extends GroovyValueFilter{
     Object onNewInstance(GroovyInterceptor.Invoker invoker, Class receiver, Object... args) throws Throwable {
         if (DEBUG) println("[CONSTRUCTOR] ${receiver.getName()} : ${Arrays.toString(args)}")
 
-        if (whitelistRegistry.isConstructorWhitelisted(receiver) || AnnotationManager.checkHasConstructorAnnotation(receiver)){
+        if (whitelistRegistry.isConstructorWhitelisted(receiver) || AnnotationManager.checkHasConstructorAnnotation(receiver)) {
             return super.onNewInstance(invoker, receiver, args)
-        }else {
+        } else {
             throw new SecurityException("Constructor of $receiver is not allowed to be called")
         }
 
@@ -48,9 +47,9 @@ class CustomValueFilter extends GroovyValueFilter{
     Object onMethodCall(GroovyInterceptor.Invoker invoker, Object receiver, String method, Object... args) throws Throwable {
         if (DEBUG) println("[METHOD] ${receiver.getClass().getName()}.${method.toString()}(${Arrays.toString(args)})")
 
-        if (whitelistRegistry.isMethodWhitelisted(receiver.getClass(), method) || AnnotationManager.checkHasMethodAnnotation(receiver.getClass(), method) || checkImplicitGetterWhitelisted(receiver.getClass(), method)){
+        if (whitelistRegistry.isMethodWhitelisted(receiver.getClass(), method) || AnnotationManager.checkHasMethodAnnotation(receiver.getClass(), method) || checkImplicitGetterWhitelisted(receiver.getClass(), method)) {
             return super.onMethodCall(invoker, receiver, method, args)
-        }else {
+        } else {
             throw new SecurityException("method ${receiver.getClass().getName()}.$method is not allowed to be called")
         }
     }
@@ -59,9 +58,9 @@ class CustomValueFilter extends GroovyValueFilter{
     Object onStaticCall(GroovyInterceptor.Invoker invoker, Class receiver, String method, Object... args) throws Throwable {
         if (DEBUG) println("[STATIC METHOD] ${receiver.getName()}.${method.toString()}(${Arrays.toString(args)})")
 
-        if (whitelistRegistry.isMethodWhitelisted(receiver, method) || AnnotationManager.checkHasMethodAnnotation(receiver, method)|| checkImplicitGetterWhitelisted(receiver, method)){
+        if (whitelistRegistry.isMethodWhitelisted(receiver, method) || AnnotationManager.checkHasMethodAnnotation(receiver, method) || checkImplicitGetterWhitelisted(receiver, method)) {
             return super.onMethodCall(invoker, receiver, method, args)
-        }else {
+        } else {
             throw new SecurityException("static method  ${receiver.getName()}.$method is not allowed to be called")
         }
     }
@@ -69,7 +68,7 @@ class CustomValueFilter extends GroovyValueFilter{
     @Override
     Object onGetProperty(GroovyInterceptor.Invoker invoker, Object receiver, String property) throws Throwable {
         Class<?> clazz
-        if (receiver instanceof Class<?>){
+        if (receiver instanceof Class<?>) {
             clazz = receiver as Class<?>
         } else {
             clazz = receiver.getClass()
@@ -78,9 +77,9 @@ class CustomValueFilter extends GroovyValueFilter{
         if (DEBUG) println("[PROPERTY GET] ${clazz}.$property")
 
 
-        if (whitelistRegistry.isFieldWhitelisted(clazz, property) || AnnotationManager.checkHasFieldAnnotation(clazz, property) || checkImplicitFieldWhitelisted(clazz, property, true)){
+        if (whitelistRegistry.isFieldWhitelisted(clazz, property) || AnnotationManager.checkHasFieldAnnotation(clazz, property) || checkImplicitFieldWhitelisted(clazz, property, true)) {
             return super.onGetProperty(invoker, receiver, property)
-        }else {
+        } else {
             throw new SecurityException("get property ${receiver.getClass().getName()}.$property is not allowed to be called")
         }
     }
@@ -88,7 +87,7 @@ class CustomValueFilter extends GroovyValueFilter{
     @Override
     Object onSetProperty(GroovyInterceptor.Invoker invoker, Object receiver, String property, Object value) throws Throwable {
         Class<?> clazz
-        if (receiver instanceof Class<?>){
+        if (receiver instanceof Class<?>) {
             clazz = receiver as Class<?>
         } else {
             clazz = receiver.getClass()
@@ -96,9 +95,9 @@ class CustomValueFilter extends GroovyValueFilter{
 
         if (DEBUG) println("[PROPERTY SET] ${clazz.getName()} : $property")
 
-        if (whitelistRegistry.isFieldWhitelisted(clazz, property) || AnnotationManager.checkHasFieldAnnotation(clazz, property) || checkImplicitFieldWhitelisted(clazz, property, false)){
+        if (whitelistRegistry.isFieldWhitelisted(clazz, property) || AnnotationManager.checkHasFieldAnnotation(clazz, property) || checkImplicitFieldWhitelisted(clazz, property, false)) {
             return super.onSetProperty(invoker, receiver, property, value)
-        }else {
+        } else {
             throw new SecurityException("set property ${receiver.getClass().getName()}.$property is not allowed to be called")
         }
     }
@@ -107,9 +106,9 @@ class CustomValueFilter extends GroovyValueFilter{
     void onSuperConstructor(GroovyInterceptor.Invoker invoker, Class receiver, Object... args) throws Throwable {
         if (DEBUG) println("[SUPER CONSTRUCTOR] ${receiver.getName()} : ${Arrays.toString(args)}")
 
-        if (whitelistRegistry.isConstructorWhitelisted(receiver) || AnnotationManager.checkHasConstructorAnnotation(receiver)){
+        if (whitelistRegistry.isConstructorWhitelisted(receiver) || AnnotationManager.checkHasConstructorAnnotation(receiver)) {
             super.onSuperConstructor(invoker, receiver, args)
-        }else {
+        } else {
             throw new SecurityException("Super Constructor of $receiver is not allowed to be called")
         }
     }
@@ -119,27 +118,27 @@ class CustomValueFilter extends GroovyValueFilter{
         if (DEBUG) println("[SUPER METHOD] ${receiver.getClass().getSuperclass().getName()}.${method.toString()}(${Arrays.toString(args)})")
         println "Sendertype $senderType"
 
-        if (whitelistRegistry.isMethodWhitelisted(receiver.getClass().getSuperclass(), method) || AnnotationManager.checkHasMethodAnnotation(receiver.getClass().getSuperclass(), method)){
+        if (whitelistRegistry.isMethodWhitelisted(receiver.getClass().getSuperclass(), method) || AnnotationManager.checkHasMethodAnnotation(receiver.getClass().getSuperclass(), method)) {
             return super.onSuperCall(invoker, senderType, receiver, method, args)
-        }else {
+        } else {
             throw new SecurityException("super method ${receiver.getClass().getSuperclass().getName()}.$method is not allowed to be called")
         }
     }
 
     // can maybe fail on inverted whitelist
-    private boolean checkImplicitFieldWhitelisted(Class<?> clazz, String fieldName, boolean isGetter){
+    private boolean checkImplicitFieldWhitelisted(Class<?> clazz, String fieldName, boolean isGetter) {
         String method
-        if (isGetter){
+        if (isGetter) {
             method = "get${StringUtils.capitalize(fieldName)}"
-        }else {
+        } else {
             method = "set${StringUtils.capitalize(fieldName)}"
         }
 
         return enableImplicitPropertySupport && (whitelistRegistry.isMethodWhitelisted(clazz, method) || AnnotationManager.checkHasMethodAnnotation(clazz, method))
     }
 
-    private boolean checkImplicitGetterWhitelisted(Class<?> clazz, String method){
-        if(method.startsWith("get") || method.startsWith("set")){
+    private boolean checkImplicitGetterWhitelisted(Class<?> clazz, String method) {
+        if (method.startsWith("get") || method.startsWith("set")) {
             String fieldName = method.substring(3)
             return enableImplicitPropertySupport && (whitelistRegistry.isFieldWhitelisted(clazz, fieldName) || AnnotationManager.checkHasFieldAnnotation(clazz, fieldName)
                     || whitelistRegistry.isFieldWhitelisted(clazz, StringUtils.lowercaseFirstLetter(fieldName)) || AnnotationManager.checkHasFieldAnnotation(clazz, StringUtils.lowercaseFirstLetter(fieldName)))

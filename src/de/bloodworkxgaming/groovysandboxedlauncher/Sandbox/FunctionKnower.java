@@ -11,6 +11,7 @@ public class FunctionKnower {
     /**
      * Adds every method to the the knower, He knows what script has which method
      * to not call each script each time without the method existing
+     *
      * @param scripts List of scripts which should be scanned
      */
     public void extractMethods(List<Script> scripts) {
@@ -35,18 +36,20 @@ public class FunctionKnower {
     }
 
     @SuppressWarnings("unchecked")
-    public List<Script> getImplementingScripts(String name, int argumentCount){
+    public List<Script> getImplementingScripts(String name, int argumentCount) {
         ExtractedMethod extractedMethod = new ExtractedMethod(name, argumentCount);
 
         return functionKnower.getOrDefault(extractedMethod, Collections.EMPTY_LIST);
     }
 
-    public boolean isFunctionImplemented(String name, int argumentCount){
+    public boolean isFunctionImplemented(String name, int argumentCount) {
         ExtractedMethod extractedMethod = new ExtractedMethod(name, argumentCount);
         return functionKnower.containsKey(extractedMethod);
     }
 
-    /** Inner class to store the extracted methods */
+    /**
+     * Inner class to store the extracted methods
+     */
     public static class ExtractedMethod {
 
         String methodName;
@@ -58,10 +61,14 @@ public class FunctionKnower {
         }
 
         @Override
-        public String toString() { return methodName + "<" + argumentCount + ">"; }
+        public String toString() {
+            return methodName + "<" + argumentCount + ">";
+        }
 
         @Override
-        public int hashCode() { return Objects.hash(methodName, argumentCount); }
+        public int hashCode() {
+            return Objects.hash(methodName, argumentCount);
+        }
 
         @Override
         public boolean equals(Object obj) {

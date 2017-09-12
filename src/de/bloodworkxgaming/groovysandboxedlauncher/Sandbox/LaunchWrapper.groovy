@@ -7,7 +7,7 @@ package de.bloodworkxgaming.groovysandboxedlauncher.Sandbox
 class LaunchWrapper {
     private Map<Class<?>, List<Class<?>>> mixingMap = new HashMap<>()
 
-    void registerMixin(Class<?> classToMixInto, Class<?> mixinClass){
+    void registerMixin(Class<?> classToMixInto, Class<?> mixinClass) {
         def list = mixingMap.getOrDefault(classToMixInto, new ArrayList<>())
         list.add(mixinClass)
 
@@ -15,7 +15,7 @@ class LaunchWrapper {
     }
 
     def init() {
-        mixingMap.forEach{ key, value ->
+        mixingMap.forEach { key, value ->
             key.getMetaClass().mixin(value)
         }
     }

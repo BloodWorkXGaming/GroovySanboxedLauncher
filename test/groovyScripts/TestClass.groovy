@@ -1,6 +1,6 @@
 package groovyScripts
 
-import de.bloodworkxgaming.groovysandboxedlauncher.TestInterface
+import de.bloodworkxgaming.testclasses.TestInterface
 
 class TestClassGroovy extends TestInterface{
     TestClassGroovy(){

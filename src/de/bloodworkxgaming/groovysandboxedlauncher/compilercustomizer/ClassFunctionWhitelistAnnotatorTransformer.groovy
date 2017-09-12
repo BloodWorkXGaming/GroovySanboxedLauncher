@@ -57,7 +57,7 @@ class ClassFunctionWhitelistAnnotatorTransformer extends CompilationCustomizer {
         }
     }
 
-    private static void addAnnotationToClass(ClassNode node, Class<? extends Annotation> annotation){
+    private static void addAnnotationToClass(ClassNode node, Class<? extends Annotation> annotation) {
         for (anno in node.getAnnotations()) {
             if (anno.getClassNode().getTypeClass() == annotation) {
                 return

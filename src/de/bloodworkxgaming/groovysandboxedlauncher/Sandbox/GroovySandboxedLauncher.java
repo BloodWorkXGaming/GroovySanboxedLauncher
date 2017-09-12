@@ -22,16 +22,17 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Jonas on 26.05.2017.
- */
-
 public class GroovySandboxedLauncher {
+    /**
+     * Setting this option to true enables additional debug info
+     */
     public static boolean DEBUG = true;
+
     public WhitelistRegistry whitelistRegistry = new WhitelistRegistry();
     public ScriptPathConfig scriptPathConfig = new ScriptPathConfig();
     public ImportModifier importModifier = new ImportModifier();
     public LaunchWrapper launchWrapper = new LaunchWrapper();
+
     private FunctionKnower functionKnower = new FunctionKnower();
     private ArrayList<Script> scripts = new ArrayList<>();
     private GroovyScriptEngine scriptEngine;
@@ -90,12 +91,12 @@ public class GroovySandboxedLauncher {
                             } catch (GroovyBugError e) {
                                 System.out.println(f.getName() + " couldn't get compiled because some function is not allowed: " + e.getMessage());
                                 e.printStackTrace();
-                            } catch (GroovyRuntimeException e){
-                                if (e.getMessage().contains("Reason: java.lang.InstantiationException")){
+                            } catch (GroovyRuntimeException e) {
+                                if (e.getMessage().contains("Reason: java.lang.InstantiationException")) {
                                     System.out.println("Error while loading script [" + f.getName() + "]: ScriptFile that is only a class also needs a default constructor");
                                 }
                                 e.printStackTrace();
-                            } catch (Exception e){
+                            } catch (Exception e) {
                                 System.out.println("Error while loading script [" + f.getName() + "]");
                                 e.printStackTrace();
                             }
@@ -158,9 +159,15 @@ public class GroovySandboxedLauncher {
 
     }
 
-    /** Register a Customizer that will get injected into the ScriptEngine on startup */
-    public void registerCompilationCustomizer(CompilationCustomizer customizer){
+    /**
+     * Register a Customizer that will get injected into the ScriptEngine on startup
+     */
+    public void registerCompilationCustomizer(CompilationCustomizer customizer) {
         compilationCustomizers.add(customizer);
+    }
+
+    public Binding getBinding() {
+        return binding;
     }
 
     public void setBinding(Binding binding) {

@@ -1,4 +1,4 @@
-package de.bloodworkxgaming.groovysandboxedlauncher;
+package de.bloodworkxgaming.testclasses;
 
 import de.bloodworkxgaming.groovysandboxedlauncher.annotations.GSLWhitelistConstructor;
 import de.bloodworkxgaming.groovysandboxedlauncher.annotations.GSLWhitelistMember;
