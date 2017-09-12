@@ -20,7 +20,7 @@ public class GSLScriptFile {
     private int priority = 0;
 
     /** Loader name gets provided so that it can only load specifc scripts, not all of them*/
-    private String loaderName = "crafttweaker";
+    private String loaderName = "gsl";
 
     private boolean debugEnabled = false;
     private boolean executionBlocked = false;

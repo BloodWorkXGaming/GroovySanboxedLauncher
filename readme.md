@@ -2,12 +2,9 @@
 
 ## TODO
 - ? Possibly language transformers
-- configurable binding (kinda)
-- load order
-- ? preprocessors
-- ? possibly loader names
-- way of enabling debug info 
-- ? per file toggleable debug info
+- way of enabling debug info          (preprocessor is there, does nothing just yet)
+- ? per file toggleable debug info    (^)
+- ? possibly loader names             (^)
 - only print stacktraces when debug is enabled
 - Events that get called on the different stages
 
@@ -24,3 +21,6 @@
 - Add mixins
 - custom CompilerCustomizers
 - block super calls to not allowed classes, as that would allow bypassing anything.
+- preprocessors, custom preprocessors can be registered
+  - load order (priority preprocessor)
+- configurable binding (setter/getter)
