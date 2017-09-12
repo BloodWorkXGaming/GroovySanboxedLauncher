@@ -1,12 +1,15 @@
 package de.bloodworkxgaming.groovysandboxedlauncher.sandbox;
 
+import de.bloodworkxgaming.groovysandboxedlauncher.data.GSLScriptFile;
 import groovy.lang.MetaMethod;
 import groovy.lang.Script;
 
 import java.util.*;
 
 public class FunctionKnower {
-    private Map<ExtractedMethod, List<Script>> functionKnower = new HashMap<>();
+    private Map<ExtractedMethod, List<GSLScriptFile>> functionKnower = new HashMap<>();
+    public static final List<GSLScriptFile> EMPTY_LIST = Collections.emptyList();
+
 
     /**
      * Adds every method to the the knower, He knows what script has which method
@@ -14,32 +17,30 @@ public class FunctionKnower {
      *
      * @param scripts List of scripts which should be scanned
      */
-    public void extractMethods(List<Script> scripts) {
+    public void extractMethods(List<GSLScriptFile> scripts) {
         functionKnower.clear();
 
-        for (Script script : scripts) {
+        for (GSLScriptFile gslScriptFile : scripts) {
+            Script script = gslScriptFile.getScript();
+            if (script == null) continue;
+
             List<MetaMethod> metaMethods = script.getMetaClass().getMethods();
 
             // adds the method names to the knower
             for (MetaMethod metaMethod : metaMethods) {
                 ExtractedMethod extractedMethod = new ExtractedMethod(metaMethod.getName(), metaMethod.getParameterTypes().length);
-
-                if (functionKnower.containsKey(extractedMethod)) {
-                    functionKnower.get(extractedMethod).add(script);
-                } else {// adds a new list when the key doesn't exist yet
-                    List<Script> scriptList = new ArrayList<>();
-                    scriptList.add(script);
-                    functionKnower.put(extractedMethod, scriptList);
-                }
+                List<GSLScriptFile> list = functionKnower.getOrDefault(extractedMethod, new ArrayList<>());
+                list.add(gslScriptFile);
+                functionKnower.put(extractedMethod, list);
             }
         }
     }
 
-    @SuppressWarnings("unchecked")
-    public List<Script> getImplementingScripts(String name, int argumentCount) {
+
+    public List<GSLScriptFile> getImplementingScripts(String name, int argumentCount) {
         ExtractedMethod extractedMethod = new ExtractedMethod(name, argumentCount);
 
-        return functionKnower.getOrDefault(extractedMethod, Collections.EMPTY_LIST);
+        return functionKnower.getOrDefault(extractedMethod, EMPTY_LIST);
     }
 
     public boolean isFunctionImplemented(String name, int argumentCount) {

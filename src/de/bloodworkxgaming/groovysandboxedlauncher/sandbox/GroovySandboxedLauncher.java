@@ -1,7 +1,9 @@
 package de.bloodworkxgaming.groovysandboxedlauncher.sandbox;
 
 import de.bloodworkxgaming.groovysandboxedlauncher.compilercustomizer.ClassFunctionWhitelistAnnotatorTransformer;
+import de.bloodworkxgaming.groovysandboxedlauncher.data.GSLScriptFile;
 import de.bloodworkxgaming.groovysandboxedlauncher.data.ScriptPathConfig;
+import de.bloodworkxgaming.groovysandboxedlauncher.preprocessor.PreprocessorManager;
 import de.bloodworkxgaming.groovysandboxedlauncher.utils.FileUtils;
 import groovy.lang.Binding;
 import groovy.lang.GroovyClassLoader;
@@ -19,8 +21,11 @@ import org.kohsuke.groovy.sandbox.impl.Checker;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class GroovySandboxedLauncher {
     /**
@@ -34,7 +39,8 @@ public class GroovySandboxedLauncher {
     public LaunchWrapper launchWrapper = new LaunchWrapper();
 
     private FunctionKnower functionKnower = new FunctionKnower();
-    private ArrayList<Script> scripts = new ArrayList<>();
+    private PreprocessorManager preprocessorManager = new PreprocessorManager();
+    private List<GSLScriptFile> gslScriptFiles = new ArrayList<>();
     private GroovyScriptEngine scriptEngine;
     private Binding binding = new Binding();
     private GroovyClassLoader classLoader = new GroovyClassLoader();
@@ -47,6 +53,8 @@ public class GroovySandboxedLauncher {
         compilationCustomizers.add(new SandboxTransformer());
         compilationCustomizers.add(importModifier.getImportCustomizer());
         compilationCustomizers.add(new ClassFunctionWhitelistAnnotatorTransformer());
+
+        PreprocessorManager.registerOwnPreprocessors(preprocessorManager);
 
 
         try {
@@ -66,50 +74,78 @@ public class GroovySandboxedLauncher {
      * Loads all scripts in the given paths
      */
     public void loadScripts() {
-        scripts.clear();
+        collectScripts();
+        preprocessorManager.checkFilesForPreprocessors(gslScriptFiles);
 
-        try {
+        gslScriptFiles.sort(PreprocessorManager.SCRIPT_FILE_COMPARATOR);
 
-            for (File path : scriptPathConfig.getScriptPathRoots()) {
-                System.out.println("Searching for scripts in: " + path.getAbsolutePath());
+        for (GSLScriptFile gslScriptFile : gslScriptFiles) {
+            if (gslScriptFile.isValidGroovyFile()){
+                System.out.println("Handling groovy script " + gslScriptFile);
 
-                // To prevent empty folders from crashing
-                File[] fileList = path.listFiles();
-                if (fileList != null) {
-                    for (File f : fileList) {
-                        System.out.println("Found file: " + f.getName());
+                try {
+                    Script script = scriptEngine.createScript(gslScriptFile.getName(), binding);
+                    gslScriptFile.setScript(script);
 
-                        if (FileUtils.isExtension(f, "groovy")) {
-                            System.out.println("matching groovy for file " + f.getName());
-                            try {
-                                scripts.add(scriptEngine.createScript(f.getName(), binding));
-                            } catch (ResourceException e) {
-                                System.out.println("Error while reading the file");
-                                e.printStackTrace();
-                            } catch (ScriptException e) {
-                                e.printStackTrace();
-                            } catch (GroovyBugError e) {
-                                System.out.println(f.getName() + " couldn't get compiled because some function is not allowed: " + e.getMessage());
-                                e.printStackTrace();
-                            } catch (GroovyRuntimeException e) {
-                                if (e.getMessage().contains("Reason: java.lang.InstantiationException")) {
-                                    System.out.println("Error while loading script [" + f.getName() + "]: ScriptFile that is only a class also needs a default constructor");
-                                }
-                                e.printStackTrace();
-                            } catch (Exception e) {
-                                System.out.println("Error while loading script [" + f.getName() + "]");
-                                e.printStackTrace();
-                            }
-                        }
+                } catch (ResourceException e) {
+                    System.out.println("Error while reading the file");
+                    e.printStackTrace();
+                } catch (ScriptException e) {
+                    e.printStackTrace();
+                } catch (GroovyBugError e) {
+                    System.out.println(gslScriptFile.getName() + " couldn't get compiled because some function is not allowed: " + e.getMessage());
+                    e.printStackTrace();
+                } catch (GroovyRuntimeException e) {
+                    if (e.getMessage().contains("Reason: java.lang.InstantiationException")) {
+                        System.out.println("Error while loading script [" + gslScriptFile.getName() + "]: ScriptFile that is only a class also needs a default constructor");
+                    }
+                    e.printStackTrace();
+                } catch (Exception e) {
+                    System.out.println("Error while loading script [" + gslScriptFile.getName() + "]");
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        functionKnower.extractMethods(gslScriptFiles);
+    }
+
+    // Don't use this unless there is a specific reason you need all of them
+    // Will cause the scriptengine to crash as it doesn't know about the subfolders
+    @Deprecated
+    private void collectScriptsRecoursive(){
+        gslScriptFiles.clear();
+        for (File path : scriptPathConfig.getScriptPathRoots()) {
+            List<Path> pathList = null;
+            try {
+                pathList = Files.find(path.toPath(), Integer.MAX_VALUE, (path1, basicFileAttributes) -> basicFileAttributes.isRegularFile()).collect(Collectors.toList());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            if (pathList != null){
+                for (Path scriptPath : pathList) {
+                    File file = scriptPath.toFile();
+                    if (file.isFile()){
+                        gslScriptFiles.add(new GSLScriptFile(file, file.getName()));
                     }
                 }
             }
-        } catch (Exception e) {
-            System.out.println("Error while loading scripts");
-            e.printStackTrace();
         }
+    }
 
-        functionKnower.extractMethods(scripts);
+    private void collectScripts(){
+        gslScriptFiles.clear();
+        for (File path : scriptPathConfig.getScriptPathRoots()) {
+            if (path == null) continue;
+            File[] filelist = path.listFiles();
+            if (filelist == null) continue;
+
+            for (File file : filelist) {
+                if (!file.isFile()) continue;
+                gslScriptFiles.add(new GSLScriptFile(file, file.getName()));
+            }
+        }
     }
 
     //TODO: add event to each stage
@@ -125,17 +161,14 @@ public class GroovySandboxedLauncher {
     public void runAllScripts() {
         resetAllToDefault();
 
-        for (Script script : functionKnower.getImplementingScripts("main", 1)) {
+        for (GSLScriptFile gslScriptFile : functionKnower.getImplementingScripts("main", 1)) {
 
             try {
-                LaunchWrapper.run(script);
+                System.out.println("launching " + gslScriptFile);
+                LaunchWrapper.run(gslScriptFile.getScript());
 
-            } catch (MultipleCompilationErrorsException e) {
-                System.out.println("Successful sandboxing: " + e.getMessage());
-            } catch (GroovyBugError e) {
-                System.out.println("The function the probably not allowed!" + e.getMessage());
             } catch (Exception e) {
-                System.out.println("<" + script.toString() + "> couldn't run lowest script in File due to " + e.getMessage());
+                System.out.println(gslScriptFile.toString() + " couldn't run lowest Script in File: " + e.getMessage());
                 e.printStackTrace();
             }
         }
@@ -145,9 +178,9 @@ public class GroovySandboxedLauncher {
 
     public void runFunctionAll(String name, Object... args) {
 
-        for (Script script : functionKnower.getImplementingScripts(name, args.length)) {
+        for (GSLScriptFile script : functionKnower.getImplementingScripts(name, args.length)) {
             try {
-                LaunchWrapper.invokeMethod(script, name, args);
+                LaunchWrapper.invokeMethod(script.getScript(), name, args);
 
             } catch (GroovyBugError e) {
                 System.out.println(script.toString() + " couldn't run function [" + name + "]: \n" + e.getMessage());
@@ -176,5 +209,9 @@ public class GroovySandboxedLauncher {
 
     public void setClassLoader(GroovyClassLoader classLoader) {
         this.classLoader = classLoader;
+    }
+
+    public PreprocessorManager getPreprocessorManager() {
+        return preprocessorManager;
     }
 }

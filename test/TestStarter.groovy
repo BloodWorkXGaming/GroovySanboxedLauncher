@@ -10,6 +10,7 @@ class TestStarter {
 
         sandbox.with {
             scriptPathConfig.registerScriptPathRoots("D:\\Users\\jonas\\Documents\\GitHub\\GroovySanboxedLauncher\\test\\groovyScripts")
+            scriptPathConfig.registerScriptPathRoots("D:\\Users\\jonas\\Documents\\GitHub\\GroovySanboxedLauncher\\test\\testScripts")
 
             WhitelistDefaults.registerWhitelistMethodDefaults(whitelistRegistry)
             launchWrapper.registerMixin(String, StringMixin)

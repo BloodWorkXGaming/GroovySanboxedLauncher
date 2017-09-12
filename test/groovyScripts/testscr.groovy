@@ -3,6 +3,7 @@ package groovyScripts
 import de.bloodworkxgaming.groovysandboxedlauncher.annotations.GSLWhitelistMember
 import de.bloodworkxgaming.groovysandboxedlauncher.utils.FileUtils
 
+//::priority 20
 println "hi".setNBT("blabla")
 def bla = [29, 20]
 
