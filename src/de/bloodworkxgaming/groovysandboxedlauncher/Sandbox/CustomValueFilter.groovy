@@ -1,5 +1,6 @@
 package de.bloodworkxgaming.groovysandboxedlauncher.Sandbox
 
+import de.bloodworkxgaming.groovysandboxedlauncher.utils.FileUtils
 import de.bloodworkxgaming.groovysandboxedlauncher.utils.StringUtils
 import groovy.transform.CompileStatic
 import org.kohsuke.groovy.sandbox.GroovyInterceptor
@@ -47,7 +48,7 @@ class CustomValueFilter extends GroovyValueFilter{
     Object onMethodCall(GroovyInterceptor.Invoker invoker, Object receiver, String method, Object... args) throws Throwable {
         if (DEBUG) println("[METHOD] ${receiver.getClass().getName()}.${method.toString()}(${Arrays.toString(args)})")
 
-        if (whitelistRegistry.isMethodWhitelisted(receiver.getClass(), method) || AnnotationManager.checkHasMethodAnnotation(receiver.getClass(), method)){
+        if (whitelistRegistry.isMethodWhitelisted(receiver.getClass(), method) || AnnotationManager.checkHasMethodAnnotation(receiver.getClass(), method) || checkImplicitGetterWhitelisted(receiver.getClass(), method)){
             return super.onMethodCall(invoker, receiver, method, args)
         }else {
             throw new SecurityException("method ${receiver.getClass().getName()}.$method is not allowed to be called")
@@ -58,7 +59,7 @@ class CustomValueFilter extends GroovyValueFilter{
     Object onStaticCall(GroovyInterceptor.Invoker invoker, Class receiver, String method, Object... args) throws Throwable {
         if (DEBUG) println("[STATIC METHOD] ${receiver.getName()}.${method.toString()}(${Arrays.toString(args)})")
 
-        if (whitelistRegistry.isMethodWhitelisted(receiver, method) || AnnotationManager.checkHasMethodAnnotation(receiver, method)){
+        if (whitelistRegistry.isMethodWhitelisted(receiver, method) || AnnotationManager.checkHasMethodAnnotation(receiver, method)|| checkImplicitGetterWhitelisted(receiver, method)){
             return super.onMethodCall(invoker, receiver, method, args)
         }else {
             throw new SecurityException("static method  ${receiver.getName()}.$method is not allowed to be called")
@@ -135,5 +136,16 @@ class CustomValueFilter extends GroovyValueFilter{
         }
 
         return enableImplicitPropertySupport && (whitelistRegistry.isMethodWhitelisted(clazz, method) || AnnotationManager.checkHasMethodAnnotation(clazz, method))
+    }
+
+    private boolean checkImplicitGetterWhitelisted(Class<?> clazz, String method){
+        if(method.startsWith("get") || method.startsWith("set")){
+            String fieldName = method.substring(3)
+            return enableImplicitPropertySupport && (whitelistRegistry.isFieldWhitelisted(clazz, fieldName) || AnnotationManager.checkHasFieldAnnotation(clazz, fieldName)
+                    || whitelistRegistry.isFieldWhitelisted(clazz, StringUtils.lowercaseFirstLetter(fieldName)) || AnnotationManager.checkHasFieldAnnotation(clazz, StringUtils.lowercaseFirstLetter(fieldName)))
+        }
+
+        return false
+
     }
 }

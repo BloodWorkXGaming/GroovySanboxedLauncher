@@ -18,11 +18,16 @@ def testFile = new TestClassGroovy("blub")
 println testFile.getMagic()
 
 // println testBlub.blaTest
-println TestClassGroovy.testInt
+println TestClassGroovy.getTestInt()
 // println String.valueOf(20)
 
 // def f = new File("D:\\Users\\jonas\\Documents\\GitHub\\GroovySanboxedLauncher\\test\\groovyScripts\\testscr.groovy")
 // println(f.toString())
+
+
+def tecla = new TeCla("D:\\Users\\jonas\\Documents\\GitHub\\GroovySanboxedLauncher\\test\\groovyScripts\\testfile")
+
+
 
 def blub (String bla){
     println "I print $bla"

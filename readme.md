@@ -3,9 +3,7 @@
 ## TODO
 - Possibly language transformers
 - configurable binding
-- custom CompilerCustomizers (Semi, has support, can't register yet)
 - load order
-- block super calls to not allowed classes, as that would allow bypassing anything.
 - ? preprocessors
 - ? possibly loader names
 - way of enabling debug info 
@@ -23,3 +21,5 @@
 - invertible whitelist -> blacklist
 - Annotations
 - Add mixins
+- custom CompilerCustomizers
+- block super calls to not allowed classes, as that would allow bypassing anything.

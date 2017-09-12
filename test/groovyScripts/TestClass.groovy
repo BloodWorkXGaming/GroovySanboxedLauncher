@@ -1,7 +1,6 @@
 package groovyScripts
 
 import de.bloodworkxgaming.groovysandboxedlauncher.TestInterface
-import de.bloodworkxgaming.groovysandboxedlauncher.annotations.GSLWhitelistMember
 
 class TestClassGroovy extends TestInterface{
     TestClassGroovy(){
