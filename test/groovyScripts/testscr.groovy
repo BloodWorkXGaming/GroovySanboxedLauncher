@@ -13,7 +13,9 @@ println FileUtils.test("blib");
 
 blub("lalal");
 
-def testFile = new TeCla("blub")
+def testFile = new TestClassGroovy("blub")
+
+println testFile.getMagic()
 
 // println testBlub.blaTest
 println TestClassGroovy.testInt

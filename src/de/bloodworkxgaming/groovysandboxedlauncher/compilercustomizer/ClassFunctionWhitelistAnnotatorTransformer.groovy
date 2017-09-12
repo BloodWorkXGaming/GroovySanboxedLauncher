@@ -10,8 +10,9 @@ import org.codehaus.groovy.control.CompilePhase
 import org.codehaus.groovy.control.SourceUnit
 import org.codehaus.groovy.control.customizers.CompilationCustomizer
 
+import java.lang.annotation.Annotation
+
 class ClassFunctionWhitelistAnnotatorTransformer extends CompilationCustomizer {
-    private HashSet<ClassNode> visitedClasses = new HashSet<>()
 
     ClassFunctionWhitelistAnnotatorTransformer() {
         super(CompilePhase.CANONICALIZATION)
@@ -19,11 +20,8 @@ class ClassFunctionWhitelistAnnotatorTransformer extends CompilationCustomizer {
 
     @Override
     void call(SourceUnit source, GeneratorContext context, ClassNode classNode) {
-        if (visitedClasses.contains(classNode)) return
-        visitedClasses.add(classNode)
-
-        classNode.addAnnotation(new AnnotationNode(new ClassNode(GSLWhitelistClass)))
-        classNode.addAnnotation(new AnnotationNode(new ClassNode(GSLWhitelistConstructor)))
+        addAnnotationToClass(classNode, GSLWhitelistConstructor)
+        addAnnotationToClass(classNode, GSLWhitelistClass)
 
         // Adds the whitelist annotation to any self created field and method to be able to call it from the own scripts
         classNode?.methods?.each {
@@ -52,5 +50,20 @@ class ClassFunctionWhitelistAnnotatorTransformer extends CompilationCustomizer {
             }
             it.addAnnotation(new AnnotationNode(new ClassNode(GSLWhitelistMember)))
         }
+
+        classNode?.innerClasses?.each {
+            addAnnotationToClass(it, GSLWhitelistConstructor)
+            addAnnotationToClass(it, GSLWhitelistClass)
+        }
+    }
+
+    private static void addAnnotationToClass(ClassNode node, Class<? extends Annotation> annotation){
+        for (anno in node.getAnnotations()) {
+            if (anno.getClassNode().getTypeClass() == annotation) {
+                return
+            }
+        }
+
+        node.addAnnotation(new AnnotationNode(new ClassNode(annotation)))
     }
 }

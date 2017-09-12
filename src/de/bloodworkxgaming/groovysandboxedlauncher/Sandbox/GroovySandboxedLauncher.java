@@ -4,6 +4,7 @@ import de.bloodworkxgaming.groovysandboxedlauncher.compilercustomizer.ClassFunct
 import de.bloodworkxgaming.groovysandboxedlauncher.data.ScriptPathConfig;
 import de.bloodworkxgaming.groovysandboxedlauncher.utils.FileUtils;
 import groovy.lang.Binding;
+import groovy.lang.GroovyClassLoader;
 import groovy.lang.GroovyRuntimeException;
 import groovy.lang.Script;
 import groovy.util.GroovyScriptEngine;
@@ -34,14 +35,13 @@ public class GroovySandboxedLauncher {
     private FunctionKnower functionKnower = new FunctionKnower();
     private ArrayList<Script> scripts = new ArrayList<>();
     private GroovyScriptEngine scriptEngine;
-    private Binding binding;
+    private Binding binding = new Binding();
+    private GroovyClassLoader classLoader = new GroovyClassLoader();
 
     private List<CompilationCustomizer> compilationCustomizers = new ArrayList<>();
 
     public void initSandbox() {
         if (!whitelistRegistry.isInvertedMethodWhitelist()) whitelistRegistry.registerMethod(Checker.class, "*");
-
-        binding = new Binding();
 
         compilationCustomizers.add(new SandboxTransformer());
         compilationCustomizers.add(importModifier.getImportCustomizer());
@@ -49,7 +49,7 @@ public class GroovySandboxedLauncher {
 
 
         try {
-            scriptEngine = new GroovyScriptEngine(scriptPathConfig.getScriptPathRootStrings());
+            scriptEngine = new GroovyScriptEngine(scriptPathConfig.getScriptPathRootStrings(), classLoader);
             scriptEngine.setConfig(new CompilerConfiguration().addCompilationCustomizers(compilationCustomizers.toArray(new CompilationCustomizer[compilationCustomizers.size()])));
 
             new CustomValueFilter(whitelistRegistry, functionKnower).register();
@@ -158,5 +158,16 @@ public class GroovySandboxedLauncher {
 
     }
 
+    /** Register a Customizer that will get injected into the ScriptEngine on startup */
+    public void registerCompilationCustomizer(CompilationCustomizer customizer){
+        compilationCustomizers.add(customizer);
+    }
 
+    public void setBinding(Binding binding) {
+        this.binding = binding;
+    }
+
+    public void setClassLoader(GroovyClassLoader classLoader) {
+        this.classLoader = classLoader;
+    }
 }

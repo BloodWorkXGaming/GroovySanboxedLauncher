@@ -1,17 +1,20 @@
 package groovyScripts
 
-class TestClassGroovy{
+import de.bloodworkxgaming.groovysandboxedlauncher.TestInterface
+import de.bloodworkxgaming.groovysandboxedlauncher.annotations.GSLWhitelistMember
+
+class TestClassGroovy extends TestInterface{
     TestClassGroovy(){
-        println "default"
+        // super(20)
     }
     TestClassGroovy(String s) {
+        //super(Integer.valueOf(s))
         println "hi i am a constructor $s"
     }
     static int testInt = 20
-}
 
-class Teee{
-    Teee(int i){
-        println i
-    }
+    /*@Override
+    int getMagic() {
+        return super.getMagic() + -23
+    }*/
 }
