@@ -7,6 +7,7 @@
 - ? possibly loader names             (^)
 - only print stacktraces when debug is enabled
 - Events that get called on the different stages
+- block annotations
 
 ## What it already can do
 - Launch any the script inside a sandbox
@@ -17,7 +18,7 @@
   - constructor calls
   - objects to exist
 - invertible whitelist -> blacklist
-- Annotations
+- Annotations to whitelist a class
 - Add mixins
 - custom CompilerCustomizers
 - block super calls to not allowed classes, as that would allow bypassing anything.

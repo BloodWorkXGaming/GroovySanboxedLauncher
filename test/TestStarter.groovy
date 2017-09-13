@@ -9,8 +9,8 @@ class TestStarter {
         def sandbox = new GroovySandboxedLauncher()
 
         sandbox.with {
-            scriptPathConfig.registerScriptPathRoots("D:\\Users\\jonas\\Documents\\GitHub\\GroovySanboxedLauncher\\test\\groovyScripts")
-            scriptPathConfig.registerScriptPathRoots("D:\\Users\\jonas\\Documents\\GitHub\\GroovySanboxedLauncher\\test\\testScripts")
+            scriptPathConfig.registerScriptPathRoots("D:\\Users\\jonas\\Documents\\GitHub\\GroovySandboxedLauncher\\test\\groovyScripts")
+            scriptPathConfig.registerScriptPathRoots("D:\\Users\\jonas\\Documents\\GitHub\\GroovySandboxedLauncher\\test\\testScripts")
 
             WhitelistDefaults.registerWhitelistMethodDefaults(whitelistRegistry)
             launchWrapper.registerMixin(String, StringMixin)
@@ -35,7 +35,7 @@ class TestStarter {
     void testNormalScriptEngine(){
         List<Script> scripts = new ArrayList<>()
         List<File> fileList = new ArrayList<>();
-        fileList.add(new File("D:\\Users\\jonas\\Documents\\GitHub\\GroovySanboxedLauncher\\test\\groovyScripts"))
+        fileList.add(new File("D:\\Users\\jonas\\Documents\\GitHub\\GroovySandboxedLauncher\\test\\groovyScripts"))
 
         Binding binding = new Binding();
         GroovyScriptEngine scriptEngine = new GroovyScriptEngine(getScriptPathRootStrings(fileList))

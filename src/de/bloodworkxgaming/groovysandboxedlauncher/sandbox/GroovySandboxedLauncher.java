@@ -31,7 +31,7 @@ public class GroovySandboxedLauncher {
     /**
      * Setting this option to true enables additional debug info
      */
-    public static boolean DEBUG = true;
+    public static boolean DEBUG = false;
 
     public WhitelistRegistry whitelistRegistry = new WhitelistRegistry();
     public ScriptPathConfig scriptPathConfig = new ScriptPathConfig();

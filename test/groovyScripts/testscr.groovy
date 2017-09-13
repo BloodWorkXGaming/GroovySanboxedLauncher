@@ -28,11 +28,11 @@ println TestClassGroovy.getTestInt()
 
 // println String.valueOf(20)
 
-// def f = new File("D:\\Users\\jonas\\Documents\\GitHub\\GroovySanboxedLauncher\\test\\groovyScripts\\testscr.groovy")
+// def f = new File("D:\\Users\\jonas\\Documents\\GitHub\\GroovySandboxedLauncher\\test\\groovyScripts\\testscr.groovy")
 // println(f.toString())
 
 
-def tecla = new TeCla("D:\\Users\\jonas\\Documents\\GitHub\\GroovySanboxedLauncher\\test\\groovyScripts\\testfile")
+def tecla = new TeCla("D:\\Users\\jonas\\Documents\\GitHub\\GroovySandboxedLauncher\\test\\groovyScripts\\testfile")
 
 
 
