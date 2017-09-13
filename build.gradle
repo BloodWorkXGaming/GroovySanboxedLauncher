@@ -18,3 +18,9 @@ dependencies {
 
 sourceSets.main.java.srcDirs = []
 sourceSets.main.groovy.srcDirs += ["src/main/java"]
+
+
+task copyCompileLibs(type: Copy) {
+    into "build/libs"
+    from configurations.compile
+}
