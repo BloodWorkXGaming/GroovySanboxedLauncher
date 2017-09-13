@@ -118,7 +118,7 @@ class CustomValueFilter extends GroovyValueFilter {
         if (DEBUG) println("[SUPER METHOD] ${receiver.getClass().getSuperclass().getName()}.${method.toString()}(${Arrays.toString(args)})")
         println "Sendertype $senderType"
 
-        if (whitelistRegistry.isMethodWhitelisted(receiver.getClass().getSuperclass(), method) || AnnotationManager.checkHasMethodAnnotation(receiver.getClass().getSuperclass(), method)) {
+        if (whitelistRegistry.isMethodWhitelisted(receiver.getClass().getSuperclass(), method, objectToClassArray(args)) || AnnotationManager.checkHasMethodAnnotation(receiver.getClass().getSuperclass(), method)) {
             return super.onSuperCall(invoker, senderType, receiver, method, args)
         } else {
             throw new SecurityException("super method ${receiver.getClass().getSuperclass().getName()}.$method is not allowed to be called")
