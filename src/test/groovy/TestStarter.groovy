@@ -9,8 +9,8 @@ class TestStarter {
         def sandbox = new GroovySandboxedLauncher()
 
         sandbox.with {
-            scriptPathConfig.registerScriptPathRoots("D:\\Users\\jonas\\Documents\\GitHub\\GroovySandboxedLauncher\\test\\groovyScripts")
-            scriptPathConfig.registerScriptPathRoots("D:\\Users\\jonas\\Documents\\GitHub\\GroovySandboxedLauncher\\test\\testScripts")
+            scriptPathConfig.registerScriptPathRoots("D:\\Users\\jonas\\Documents\\GitHub\\GroovySandboxedLauncher\\src\\test\\groovy\\groovyScripts")
+            scriptPathConfig.registerScriptPathRoots("D:\\Users\\jonas\\Documents\\GitHub\\GroovySandboxedLauncher\\src\\test\\groovy\\testScripts")
 
             WhitelistDefaults.registerWhitelistMethodDefaults(whitelistRegistry)
             launchWrapper.registerMixin(String, StringMixin)
