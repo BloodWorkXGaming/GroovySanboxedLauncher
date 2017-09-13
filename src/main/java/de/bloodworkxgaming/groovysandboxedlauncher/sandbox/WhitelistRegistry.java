@@ -1,5 +1,8 @@
 package de.bloodworkxgaming.groovysandboxedlauncher.sandbox;
 
+import de.bloodworkxgaming.groovysandboxedlauncher.utils.StringUtils;
+
+import java.lang.reflect.Method;
 import java.util.*;
 
 public class WhitelistRegistry {
@@ -8,7 +11,10 @@ public class WhitelistRegistry {
     private boolean invertConstructorWhitelist = false;
     private boolean invertObjectWhitelist = false;
 
-    private Map<String, Set<String>> allowedFunctions = new HashMap<>();
+
+    // private Map<String, Set<String>> allowedFunctions = new HashMap<>();
+    private Set<WhiteListedMethod> allowedMethods = new HashSet<>();
+
     private Map<String, Set<String>> allowedFields = new HashMap<>();
     private Set<String> allowedConstructorCalls = new HashSet<>();
     private Set<String> allowedObjectExistence = new HashSet<>();
@@ -20,54 +26,84 @@ public class WhitelistRegistry {
      *
      * @param clazz      Class that should be registered
      * @param methodName method that should be allowed
-     *                   To allow any method from that class register it as a '*'
      */
     public void registerMethod(Class<?> clazz, String methodName) {
-        Set<String> functions = allowedFunctions.getOrDefault(clazz.getName(), new HashSet<>());
-        functions.add(methodName);
-
-        allowedFunctions.put(clazz.getName(), functions);
+        allowedMethods.add(new WhiteListedMethod(clazz, methodName));
     }
+
+    public void registerMethod(Class<?> clazz, String methodName, Class<?>... arguments) {
+        allowedMethods.add(new WhiteListedMethod(clazz, methodName, arguments));
+    }
+
+    public void registerWildCardMethod(Class<?> clazz){
+        allowedMethods.add(new WhiteListedMethod(clazz, false, null, true, true));
+    }
+
+    public void registerWildCardMethodWithoutClass(String functionName, boolean wildcardArguments, Class<?>... arguments){
+        allowedMethods.add(new WhiteListedMethod(null, true, functionName, false, wildcardArguments, arguments));
+    }
+
 
     /**
      * Register methods as string (if it is not present in the current classpath)
      * Skips any wrongly formatted entries
      *
-     * @param methods Identifier of the Mathod 'classname#methodname'
+     * Identifier of the Mathod 'classname#methodname'
      *                Method name can be * for any
      */
-    public void registerMethods(String... methods) {
-        for (String method : methods) {
-            String[] split = method.split("#");
-            if (split.length == 2) {
-                Set<String> functions = allowedFunctions.getOrDefault(split[0], new HashSet<>());
-                functions.add(split[1]);
-
-                allowedFunctions.put(split[0], functions);
+    public void registerMethod(String className, boolean isWildcardClass, String methodName, boolean isWildcardMethod, boolean isWildcardArguments, String... arguments) {
+        try {
+            Class<?>[] classes = new Class<?>[arguments.length];
+            for (int i = 0; i < arguments.length; i++) {
+                classes[i] = Class.forName(arguments[i]);
             }
+
+            allowedMethods.add(new WhiteListedMethod(Class.forName(className), isWildcardClass, methodName, isWildcardMethod, isWildcardArguments, classes));
+        } catch (ClassNotFoundException e) {
+            System.out.println("Couldn't find a Class while trying to register Method to whitelist:\n" + e.getMessage());
         }
     }
 
     /**
      * Checks whether the given class and method is registered
      */
-    public boolean isMethodWhitelisted(Class<?> clazz, String methodName) {
-        if (clazz == null) return invertMethodWhitelist; // false
+    public boolean isMethodWhitelisted(Class<?> clazz, String methodName, Class<?>... args) {
+        if (clazz == null || methodName == null) return invertMethodWhitelist; // false
 
-        Set<String> functions = allowedFunctions.get(clazz.getName());
-        if (functions != null && (functions.contains(methodName) || functions.contains("*"))) {
-            return !invertMethodWhitelist; // true
-        }
+        WhiteListedMethod method = new WhiteListedMethod(clazz, false, methodName, false, false, args);
+        if (allowedMethods.contains(method)) return !invertMethodWhitelist; // true
 
-        if (isMethodWhitelisted(clazz.getSuperclass(), methodName)) return !invertMethodWhitelist; // true
 
-        for (Class interfaceClass : clazz.getInterfaces()) {
-            if (isMethodWhitelisted(interfaceClass, methodName)) {
-                return !invertMethodWhitelist; // true
+        if (!implementsFunction(clazz, methodName, args)){
+            if (isMethodWhitelisted(clazz.getSuperclass(), methodName, args)) return !invertMethodWhitelist; // true
+
+            for (Class interfaceClass : clazz.getInterfaces()) {
+                if (isMethodWhitelisted(interfaceClass, methodName, args)) {
+                    return !invertMethodWhitelist; // true
+                }
             }
         }
 
         return invertMethodWhitelist; // false
+    }
+
+    private boolean implementsFunction(Class<?> clazz, String methodName, Class<?>... params){
+
+        outerLoop:
+        for (Method method : clazz.getDeclaredMethods()) {
+            if (method.getName().equals(methodName)){
+                Class<?>[] paraTypes = method.getParameterTypes();
+                if (paraTypes.length != params.length) continue;
+
+                for (int i = 0; i < paraTypes.length; i++) {
+                    if (!paraTypes[i].isAssignableFrom(params[i])) continue outerLoop;
+                }
+
+                return true;
+            }
+        }
+
+        return false;
     }
     //endregion
 
@@ -216,7 +252,95 @@ public class WhitelistRegistry {
     //endregion
 
     public void registerAllMethodsAndFields(Class clazz) {
-        registerMethod(clazz, "*");
+        registerWildCardMethod(clazz);
         registerField(clazz, "*");
+    }
+
+
+    static class WhiteListedMethod{
+        Class<?> clazz;
+        boolean isWildcardClass;
+
+        String methodName;
+        boolean isWildcardMethod;
+
+        boolean isWildcardArguments;
+        Class<?>[] arguments;
+
+
+        public WhiteListedMethod(Class<?> clazz, boolean isWildcardClass, String methodName, boolean isWildcardMethod, boolean isWildcardArguments, Class<?>... arguments) {
+            this.clazz = clazz;
+            this.isWildcardClass = isWildcardClass;
+            this.methodName = methodName;
+            this.isWildcardMethod = isWildcardMethod;
+            this.isWildcardArguments = isWildcardArguments;
+            this.arguments = arguments;
+        }
+
+        public WhiteListedMethod(Class<?> clazz, String methodName) {
+            this.clazz = clazz;
+            isWildcardClass = false;
+            this.methodName = methodName;
+            isWildcardArguments = true;
+        }
+
+        public WhiteListedMethod(Class<?> clazz, String methodName, Class<?>... arguments) {
+            this.clazz = clazz;
+            isWildcardClass = false;
+            this.methodName = methodName;
+            this.arguments = arguments;
+            isWildcardArguments = false;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            // Whitelisted objects in the map are THAT
+            // objects to compare to THIS
+            WhiteListedMethod that = (WhiteListedMethod) o;
+
+            boolean areTheSame;
+
+            areTheSame = that.isWildcardClass || this.isWildcardClass || Objects.equals(that.clazz, this.clazz);
+            if (!areTheSame) return false;
+
+            areTheSame = that.isWildcardMethod || this.isWildcardMethod || Objects.equals(that.methodName, this.methodName);
+            if (!areTheSame) return false;
+
+            areTheSame = that.isWildcardArguments || this.isWildcardArguments || classTypesEquals(that.arguments, this.arguments);
+            return areTheSame;
+        }
+
+        @Override
+        public int hashCode() {
+            return clazz != null ? clazz.hashCode() : 0;
+        }
+
+        // Class objects in the map are a1
+        // Class objects to compare to a2
+        private boolean classTypesEquals(Class<?>[] a1, Class<?>[] a2){
+            if (a1==a2)
+                return true;
+            if (a1==null || a2==null)
+                return false;
+
+            int length = a1.length;
+            if (a2.length != length)
+                return false;
+
+            for (int i=0; i<length; i++) {
+                Class<?> c1 = a1[i];
+                Class<?> c2 = a2[i];
+                System.out.println("c1 = " + c1);
+                System.out.println("c2 = " + c2);
+                if (c1 != null && c2 != null){
+                    if (!c1.isAssignableFrom(c2)) return false;
+                }
+            }
+
+            return true;
+        }
     }
 }

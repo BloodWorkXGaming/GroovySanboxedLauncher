@@ -14,11 +14,12 @@ class WhitelistDefaults {
             registerMethod(GroovyObject.class, "println")
             registerMethod(GroovyObject.class, "print")
             registerMethod(GroovyObject.class, "printf")
+            registerMethod(Object.class, "with", Closure)
 
             // --------- Useful collections ---------
-            registerMethod(List.class, "*")
-            registerMethod(Map.class, "*")
-            registerMethod(Set.class, "*")
+            registerWildCardMethod(List.class)
+            registerWildCardMethod(Map.class)
+            registerWildCardMethod(Set.class)
 
             registerConstructorCall(ArrayList.class, HashSet.class, HashMap.class)
 
@@ -32,12 +33,12 @@ class WhitelistDefaults {
             registerAllMethodsAndFields(Double.class)
             registerAllMethodsAndFields(Float.class)
 
-            registerMethod(Object.class, "toString")
-            registerMethod(Object.class, "equals")
-            registerMethod(Object.class, "hashCode")
+            registerWildCardMethodWithoutClass("toString", false)
+            registerWildCardMethodWithoutClass("equals", false)
+            registerWildCardMethodWithoutClass("hashCode", false)
 
             // ----------- Useful helper classes -------
-            registerMethod(Math.class, "*")
+            registerAllMethodsAndFields(Math.class)
 
 
         }

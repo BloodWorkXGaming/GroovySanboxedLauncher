@@ -17,13 +17,19 @@ blub("lalal");
 
 def testFile = new TestClassGroovy("blub")
 // println TestInterface.@testInt = 10
-println "TestArray: ${TestInterface.@testArray[0]}"
+// println "TestArray: ${TestInterface.@testArray[0]}"
 
 // println testFile.hithere
 // println testFile.getMagic()
 
 // println testBlub.blaTest
 println TestClassGroovy.getTestInt()
+
+
+def testInterface = new TestInterface()
+testInterface.with {
+
+}
 
 
 // println String.valueOf(20)
@@ -33,8 +39,6 @@ println TestClassGroovy.getTestInt()
 
 
 def tecla = new TeCla("D:\\Users\\jonas\\Documents\\GitHub\\GroovySandboxedLauncher\\test\\groovyScripts\\testfile")
-
-
 
 def blub (String bla){
     println "I print $bla"
@@ -49,5 +53,5 @@ class TeCla{
     TeCla(String s) {
         println "hi i am a constructor $s"
     }
-    static int testInt = 20
+    String teststring = "blablabla i am with the force"
 }

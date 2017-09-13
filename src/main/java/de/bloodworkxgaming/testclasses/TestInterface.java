@@ -2,6 +2,7 @@ package de.bloodworkxgaming.testclasses;
 
 import de.bloodworkxgaming.groovysandboxedlauncher.annotations.GSLWhitelistConstructor;
 import de.bloodworkxgaming.groovysandboxedlauncher.annotations.GSLWhitelistMember;
+import groovy.lang.Closure;
 
 @GSLWhitelistConstructor
 public class TestInterface {
@@ -12,6 +13,14 @@ public class TestInterface {
     @GSLWhitelistMember
     public int getMagic() {
         return 2;
+    }
+
+    void with(int bla){
+        System.out.println("bla = " + bla);
+    }
+
+    void with(Closure closure){
+        closure.run();
     }
 
 }
