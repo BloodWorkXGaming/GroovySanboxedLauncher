@@ -80,7 +80,7 @@ class CustomValueFilter extends GroovyValueFilter {
         if (whitelistRegistry.isFieldWhitelisted(clazz, property) || AnnotationManager.checkHasFieldAnnotation(clazz, property) || checkImplicitFieldWhitelisted(clazz, property, true)) {
             return super.onGetProperty(invoker, receiver, property)
         } else {
-            throw new SecurityException("get property ${receiver.getClass().getName()}.$property is not allowed to be called")
+            throw new SecurityException("get property ${clazz.getName()}.$property is not allowed to be called")
         }
     }
 
@@ -123,6 +123,46 @@ class CustomValueFilter extends GroovyValueFilter {
         } else {
             throw new SecurityException("super method ${receiver.getClass().getSuperclass().getName()}.$method is not allowed to be called")
         }
+    }
+
+    @Override
+    Object onGetAttribute(GroovyInterceptor.Invoker invoker, Object receiver, String attribute) throws Throwable {
+        Class<?> clazz
+        if (receiver instanceof Class<?>) {
+            clazz = receiver as Class<?>
+        } else {
+            clazz = receiver.getClass()
+        }
+
+        if (DEBUG) println("[ATTRIBUTE GET] ${clazz}.$attribute")
+
+
+        if (whitelistRegistry.isFieldWhitelisted(clazz, attribute) || AnnotationManager.checkHasFieldAnnotation(clazz, attribute)) {
+            return super.onGetAttribute(invoker, receiver, attribute)
+        } else {
+            throw new SecurityException("get attribute ${clazz.getName()}.$attribute is not allowed to be called")
+        }
+    }
+
+    @Override
+    Object onSetAttribute(GroovyInterceptor.Invoker invoker, Object receiver, String attribute, Object value) throws Throwable {
+        Class<?> clazz
+        if (receiver instanceof Class<?>) {
+            clazz = receiver as Class<?>
+        } else {
+            clazz = receiver.getClass()
+        }
+
+        if (DEBUG) println("[ATTRIBUTE SET] ${clazz}.$attribute")
+
+
+        if (whitelistRegistry.isFieldWhitelisted(clazz, attribute) || AnnotationManager.checkHasFieldAnnotation(clazz, attribute)) {
+            return super.onSetAttribute(invoker, receiver, attribute, value)
+        } else {
+            throw new SecurityException("set attribute ${clazz.getName()}.$attribute is not allowed to be called")
+        }
+
+
     }
 
     // can maybe fail on inverted whitelist

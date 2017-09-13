@@ -23,4 +23,6 @@
 - block super calls to not allowed classes, as that would allow bypassing anything.
 - preprocessors, custom preprocessors can be registered
   - load order (priority preprocessor)
+  - norun (block execution with preprocessor, script still gets created)
+  - nocompile (block script creation)
 - configurable binding (setter/getter)

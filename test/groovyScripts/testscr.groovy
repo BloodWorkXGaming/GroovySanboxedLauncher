@@ -2,6 +2,7 @@ package groovyScripts
 
 import de.bloodworkxgaming.groovysandboxedlauncher.annotations.GSLWhitelistMember
 import de.bloodworkxgaming.groovysandboxedlauncher.utils.FileUtils
+import de.bloodworkxgaming.testclasses.TestInterface
 
 //::priority 20
 println "hi".setNBT("blabla")
@@ -15,11 +16,16 @@ println FileUtils.test("blib");
 blub("lalal");
 
 def testFile = new TestClassGroovy("blub")
+// println TestInterface.@testInt = 10
+println "TestArray: ${TestInterface.@testArray[0]}"
 
-println testFile.getMagic()
+// println testFile.hithere
+// println testFile.getMagic()
 
 // println testBlub.blaTest
 println TestClassGroovy.getTestInt()
+
+
 // println String.valueOf(20)
 
 // def f = new File("D:\\Users\\jonas\\Documents\\GitHub\\GroovySanboxedLauncher\\test\\groovyScripts\\testscr.groovy")

@@ -81,6 +81,10 @@ public class GroovySandboxedLauncher {
 
         for (GSLScriptFile gslScriptFile : gslScriptFiles) {
             if (gslScriptFile.isValidGroovyFile()){
+                if (gslScriptFile.isScriptCreationBlocked()){
+                    System.out.println("Skipping script " + gslScriptFile + " due to preprocessors");
+                    continue;
+                }
                 System.out.println("Handling groovy script " + gslScriptFile);
 
                 try {
@@ -162,7 +166,7 @@ public class GroovySandboxedLauncher {
         resetAllToDefault();
 
         for (GSLScriptFile gslScriptFile : functionKnower.getImplementingScripts("main", 1)) {
-
+            if (gslScriptFile.isExecutionBlocked()) continue;
             try {
                 System.out.println("launching " + gslScriptFile);
                 LaunchWrapper.run(gslScriptFile.getScript());
@@ -179,6 +183,8 @@ public class GroovySandboxedLauncher {
     public void runFunctionAll(String name, Object... args) {
 
         for (GSLScriptFile script : functionKnower.getImplementingScripts(name, args.length)) {
+            if (script.isExecutionBlocked()) continue;
+
             try {
                 LaunchWrapper.invokeMethod(script.getScript(), name, args);
 

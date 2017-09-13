@@ -1,10 +1,7 @@
 package de.bloodworkxgaming.groovysandboxedlauncher.preprocessor;
 
 import de.bloodworkxgaming.groovysandboxedlauncher.data.GSLScriptFile;
-import de.bloodworkxgaming.groovysandboxedlauncher.defaults.DebugPreprocessor;
-import de.bloodworkxgaming.groovysandboxedlauncher.defaults.LoaderPreprocessor;
-import de.bloodworkxgaming.groovysandboxedlauncher.defaults.NoRunPreprocessor;
-import de.bloodworkxgaming.groovysandboxedlauncher.defaults.PriorityPreprocessor;
+import de.bloodworkxgaming.groovysandboxedlauncher.defaults.*;
 import de.bloodworkxgaming.groovysandboxedlauncher.events.EventList;
 import de.bloodworkxgaming.groovysandboxedlauncher.events.IGSLEvent;
 import de.bloodworkxgaming.groovysandboxedlauncher.utils.StringUtils;
@@ -134,6 +131,7 @@ public class PreprocessorManager {
     public static void registerOwnPreprocessors(PreprocessorManager manager){
         manager.registerPreprocessorAction("debug", DebugPreprocessor::new);
         manager.registerPreprocessorAction("norun", NoRunPreprocessor::new);
+        manager.registerPreprocessorAction("nocompile", NoCompilePreprocessor::new);
         manager.registerPreprocessorAction("loader", LoaderPreprocessor::new);
         manager.registerPreprocessorAction("priority", PriorityPreprocessor::new);
     }

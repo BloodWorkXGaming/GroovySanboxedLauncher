@@ -3,6 +3,7 @@ package groovyScripts
 import de.bloodworkxgaming.testclasses.TestInterface
 
 class TestClassGroovy extends TestInterface{
+    def hithere = 20;
     TestClassGroovy(){
         // super(20)
     }

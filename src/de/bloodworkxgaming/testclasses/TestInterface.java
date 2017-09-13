@@ -5,8 +5,9 @@ import de.bloodworkxgaming.groovysandboxedlauncher.annotations.GSLWhitelistMembe
 
 @GSLWhitelistConstructor
 public class TestInterface {
-    @GSLWhitelistMember
-    public int magic = 200;
+    // public int magic = 200;
+    public static int testInt = 99;
+    public static int[] testArray = {29, 20, 19};
 
     @GSLWhitelistMember
     public int getMagic() {
