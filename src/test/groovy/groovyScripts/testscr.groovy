@@ -25,11 +25,9 @@ def testFile = new TestClassGroovy("blub")
 // println testBlub.blaTest
 println TestClassGroovy.getTestInt()
 
+println recipes.getMagic()
 
 def testInterface = new TestInterface()
-testInterface.with {
-
-}
 
 
 // println String.valueOf(20)

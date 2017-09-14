@@ -1,7 +1,9 @@
 package de.bloodworkxgaming.groovysandboxedlauncher.defaults
 
 import de.bloodworkxgaming.groovysandboxedlauncher.sandbox.WhitelistRegistry
+import groovy.transform.CompileStatic
 
+@CompileStatic
 class WhitelistDefaults {
     static void registerWhitelistMethodDefaults(WhitelistRegistry registry) {
 

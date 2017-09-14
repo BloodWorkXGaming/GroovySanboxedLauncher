@@ -1,6 +1,7 @@
 import de.bloodworkxgaming.groovysandboxedlauncher.sandbox.GroovySandboxedLauncher
 import de.bloodworkxgaming.testclasses.StringMixin
 import de.bloodworkxgaming.groovysandboxedlauncher.defaults.WhitelistDefaults
+import de.bloodworkxgaming.testclasses.TestInterface
 import org.junit.Test
 
 class TestStarter {
@@ -15,12 +16,17 @@ class TestStarter {
             WhitelistDefaults.registerWhitelistMethodDefaults(whitelistRegistry)
             launchWrapper.registerMixin(String, StringMixin)
 
+            whitelistRegistry.registerField(Script, "recipes")
+
             whitelistRegistry.invertObjectWhitelist()
             // whitelistRegistry.invertConstructorWhitelist()
             // whitelistRegistry.invertMethodWhitelist()
             // whitelistRegistry.invertFieldWhitelist()
 
             importModifier.addStaticStars("java.lang.Math")
+
+
+            getBinding().setVariable("recipes", new TestInterface())
 
 
             initSandbox()

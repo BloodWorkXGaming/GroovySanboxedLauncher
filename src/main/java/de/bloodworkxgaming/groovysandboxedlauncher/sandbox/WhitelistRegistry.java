@@ -96,7 +96,7 @@ public class WhitelistRegistry {
                 if (paraTypes.length != params.length) continue;
 
                 for (int i = 0; i < paraTypes.length; i++) {
-                    if (!paraTypes[i].isAssignableFrom(params[i])) continue outerLoop;
+                    if (!(params[i] == null && !paraTypes[i].isPrimitive()) || !paraTypes[i].isAssignableFrom(params[i])) continue outerLoop;
                 }
 
                 return true;
