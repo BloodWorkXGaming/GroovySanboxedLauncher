@@ -5,14 +5,26 @@ import de.bloodworkxgaming.groovysandboxedlauncher.annotations.GSLOptional;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static de.bloodworkxgaming.groovysandboxedlauncher.sandbox.GroovySandboxedLauncher.DEBUG;
 
 public class OptionalParasManager {
+    private static final Map<Class<?>, Class<?>> PRIMITIVES_TO_WRAPPERS = new HashMap<>();;
+
+    static {
+        PRIMITIVES_TO_WRAPPERS.put(boolean.class, Boolean.class);
+        PRIMITIVES_TO_WRAPPERS.put(byte.class, Byte.class);
+        PRIMITIVES_TO_WRAPPERS.put(char.class, Character.class);
+        PRIMITIVES_TO_WRAPPERS.put(double.class, Double.class);
+        PRIMITIVES_TO_WRAPPERS.put(float.class, Float.class);
+        PRIMITIVES_TO_WRAPPERS.put(int.class, Integer.class);
+        PRIMITIVES_TO_WRAPPERS.put(long.class, Long.class);
+        PRIMITIVES_TO_WRAPPERS.put(short.class, Short.class);
+        PRIMITIVES_TO_WRAPPERS.put(void.class, Void.class);
+    }
+
+
     public static Object[] checkParas(Class<?> receiver, String methodName, Object... args) {
         // gets all the valid methods
         List<Method> methods = new ArrayList<>();
@@ -50,12 +62,11 @@ public class OptionalParasManager {
             if (paras.length > argumentTypes.length) {
 
                 // checks whether the first few parameters are correct
-                for (int i = 0; i < argumentTypes.length; i++) {
-                    if (argumentTypes[i] == null || paras[i] != null && paras[i].getType().isAssignableFrom(argumentTypes[i]))
-                        continue methodLoop;
-                }
+                if (!canBeAssigned(
+                        Arrays.copyOfRange(method.getParameterTypes(), 0, argumentTypes.length - 1),
+                        Arrays.copyOfRange(args, 0, argumentTypes.length - 1))) continue;
 
-
+                // list of objects that will be returned as new parameters
                 List<Object> objects = new ArrayList<>();
                 Collections.addAll(objects, args);
 
@@ -96,9 +107,33 @@ public class OptionalParasManager {
         if (paras.length != args.length) return false;
 
         for (int i = 0; i < paras.length; i++) {
-            if (args[i] != null && !paras[i].isAssignableFrom(args[i].getClass())) return false;
+            if (args[i] == null && !paras[i].isPrimitive()) continue;
+            if (paras[i].isPrimitive() && isPrimitiveOfSameType(paras[i], args[i].getClass())) continue;
+            if (paras[i].isAssignableFrom(args[i].getClass())) continue;
+            return false;
         }
 
         return true;
+    }
+
+
+    private static boolean isPrimitiveOfSameType(Class<?> type1, Class<?> type2){
+        if (type1.isPrimitive() && type2.isPrimitive()){
+            return type1.equals(type2);
+        }
+        Class<?> primitive;
+        Class<?> other;
+
+        if (type1.isPrimitive()){
+            primitive = type1;
+            other = type2;
+        }else {
+            primitive = type2;
+            other = type1;
+        }
+
+        Class<?> wrapper = PRIMITIVES_TO_WRAPPERS.get(primitive);
+
+        return other.equals(wrapper);
     }
 }
