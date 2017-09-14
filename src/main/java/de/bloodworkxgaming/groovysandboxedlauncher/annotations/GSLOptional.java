@@ -12,12 +12,19 @@ import java.lang.annotation.Target;
 @Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface GSLOptional {
-    byte    defaultByteValue()      default 0;
-    short   defaultShortValue()     default 0;
-    int     defaultIntValue()       default 0;
-    long    defaultLongValue()      default 0L;
-    float   defaultFloatValue()     default 0.0f;
-    double  defaultDoubleValue()    default 0.0d;
-    char    defaultCharValue()      default '\u0000';
-    boolean defaultBooleanValue()   default false;
+    byte defaultByteValue() default 0;
+
+    short defaultShortValue() default 0;
+
+    int defaultIntValue() default 0;
+
+    long defaultLongValue() default 0L;
+
+    float defaultFloatValue() default 0.0f;
+
+    double defaultDoubleValue() default 0.0d;
+
+    char defaultCharValue() default '\u0000';
+
+    boolean defaultBooleanValue() default false;
 }

@@ -6,16 +6,16 @@ import de.bloodworkxgaming.groovysandboxedlauncher.annotations.GSLWhitelistMembe
 
 @GSLWhitelistConstructor
 public class TestClass extends TestInterface {
-    @Override
-    public int getMagic() {
-        return super.getMagic();
-    }
-
     @GSLWhitelistMember
-    public static int testParas(int a, @GSLOptional(defaultIntValue = -29) int b){
+    public static int testParas(int a, @GSLOptional(defaultIntValue = -29) int b) {
         System.out.println("a = " + a);
         System.out.println("b = " + b);
 
         return a - b;
+    }
+
+    @Override
+    public int getMagic() {
+        return super.getMagic();
     }
 }

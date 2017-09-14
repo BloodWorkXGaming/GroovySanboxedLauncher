@@ -70,13 +70,13 @@ public class WhitelistRegistry {
 
 
         //if (!implementsFunction(clazz, methodName, args)) {
-            if (isMethodWhitelisted(clazz.getSuperclass(), methodName, args)) return !invertMethodWhitelist; // true
+        if (isMethodWhitelisted(clazz.getSuperclass(), methodName, args)) return !invertMethodWhitelist; // true
 
-            for (Class interfaceClass : clazz.getInterfaces()) {
-                if (isMethodWhitelisted(interfaceClass, methodName, args)) {
-                    return !invertMethodWhitelist; // true
-                }
+        for (Class interfaceClass : clazz.getInterfaces()) {
+            if (isMethodWhitelisted(interfaceClass, methodName, args)) {
+                return !invertMethodWhitelist; // true
             }
+        }
         // }
 
         return invertMethodWhitelist; // false

@@ -11,7 +11,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class OptionalParasManager {
-    public static Object[] checkParas(Class<?> receiver, String methodName, Object... args){
+    public static Object[] checkParas(Class<?> receiver, String methodName, Object... args) {
         // gets all the valid methods
         List<Method> methods = new ArrayList<>();
         for (Method method : receiver.getMethods()) {
@@ -32,9 +32,9 @@ public class OptionalParasManager {
             }
         }
 
-        if (!canAssignAny && foundSomething){
+        if (!canAssignAny && foundSomething) {
             System.out.println("Can't assign to any possible method implementation '" + methodName + "' args: " + Arrays.toString(args));
-        }else {
+        } else {
             return args;
         }
 
@@ -44,10 +44,11 @@ public class OptionalParasManager {
             if (!method.getName().equals(methodName)) continue;
 
             Parameter[] paras = method.getParameters();
-            if (paras.length > argumentTypes.length){
+            if (paras.length > argumentTypes.length) {
                 // checks whether the first few parameters are correct
                 for (int i = 0; i < argumentTypes.length; i++) {
-                    if (argumentTypes[i] == null || paras[i] != null && paras[i].getType().isAssignableFrom(argumentTypes[i])) continue methodLoop;
+                    if (argumentTypes[i] == null || paras[i] != null && paras[i].getType().isAssignableFrom(argumentTypes[i]))
+                        continue methodLoop;
                 }
 
 
@@ -63,9 +64,9 @@ public class OptionalParasManager {
                     boolean hasMatch = false;
                     for (Annotation annotation : annotations) {
                         for (Class<? extends Annotation> aClass : AnnotationManager.annotationsOptionalParameter) {
-                            if (aClass.equals(annotation.annotationType())){
+                            if (aClass.equals(annotation.annotationType())) {
                                 hasMatch = true;
-                                if (annotation instanceof GSLOptional){
+                                if (annotation instanceof GSLOptional) {
                                     optional = (GSLOptional) annotation;
                                 }
                             }
@@ -84,7 +85,7 @@ public class OptionalParasManager {
         return args;
     }
 
-    private static boolean canBeAssigned(Class<?>[] paras, Object[] args){
+    private static boolean canBeAssigned(Class<?>[] paras, Object[] args) {
         if (paras == null && args == null) return true;
         if (paras == null || args == null) return false;
 

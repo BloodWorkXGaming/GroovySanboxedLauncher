@@ -12,10 +12,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AnnotationManager {
+    public static final List<Class<? extends Annotation>> annotationsOptionalParameter = new ArrayList<>();
     private static List<Class<? extends Annotation>> annotationsMemberWhitelist = new ArrayList<>();
     private static List<Class<? extends Annotation>> annotationsClassWhitelist = new ArrayList<>();
     private static List<Class<? extends Annotation>> annotationsConstructorWhitelist = new ArrayList<>();
-    public static final List<Class<? extends Annotation>> annotationsOptionalParameter = new ArrayList<>();
 
     static {
         annotationsClassWhitelist.add(GSLWhitelistClass.class);
@@ -37,7 +37,7 @@ public class AnnotationManager {
 
         for (Method method : clazz.getDeclaredMethods()) {
             if (method.getName().equals(methodName)) {
-                if(annotationsMemberWhitelist.stream().anyMatch(method::isAnnotationPresent)) return true;
+                if (annotationsMemberWhitelist.stream().anyMatch(method::isAnnotationPresent)) return true;
             }
         }
 
@@ -74,28 +74,28 @@ public class AnnotationManager {
     /**
      * Registering a annotation here will make it have the same effect as {@link GSLWhitelistClass}
      */
-    public static void registerClassWhitelistingAnnotation(Class<? extends Annotation> annotationClass){
+    public static void registerClassWhitelistingAnnotation(Class<? extends Annotation> annotationClass) {
         annotationsClassWhitelist.add(annotationClass);
     }
 
     /**
      * Registering a annotation here will make it have the same effect as {@link GSLWhitelistMember}
      */
-    public static void registerMemberWhitelistingAnnotation(Class<? extends Annotation> annotationClass){
+    public static void registerMemberWhitelistingAnnotation(Class<? extends Annotation> annotationClass) {
         annotationsMemberWhitelist.add(annotationClass);
     }
 
     /**
      * Registering a annotation here will make it have the same effect as {@link GSLWhitelistConstructor}
      */
-    public static void registerConstructorWhitelistingAnnotation(Class<? extends Annotation> annotationClass){
+    public static void registerConstructorWhitelistingAnnotation(Class<? extends Annotation> annotationClass) {
         annotationsConstructorWhitelist.add(annotationClass);
     }
 
     /**
      * Registering a annotation here will make it have the same effect as {@link de.bloodworkxgaming.groovysandboxedlauncher.annotations.GSLOptional}
      */
-    public static void registerOptionalParameterAnnotation(Class<? extends Annotation> annotationClass){
+    public static void registerOptionalParameterAnnotation(Class<? extends Annotation> annotationClass) {
         annotationsOptionalParameter.add(annotationClass);
     }
 }

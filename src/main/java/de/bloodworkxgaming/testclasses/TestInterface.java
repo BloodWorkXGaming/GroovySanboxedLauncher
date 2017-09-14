@@ -15,11 +15,11 @@ public class TestInterface {
         return 2;
     }
 
-    void with(int bla){
+    void with(int bla) {
         System.out.println("bla = " + bla);
     }
 
-    void with(Closure closure){
+    void with(Closure closure) {
         closure.run();
     }
 

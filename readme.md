@@ -27,3 +27,5 @@
   - norun (block execution with preprocessor, script still gets created)
   - nocompile (block script creation)
 - configurable binding (setter/getter)
+- Optional Parameter (with default values)
+- Any Annotation can be replaced by a custom annotation (maybe from a different library)
