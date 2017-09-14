@@ -10,6 +10,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import static de.bloodworkxgaming.groovysandboxedlauncher.sandbox.GroovySandboxedLauncher.DEBUG;
+
 public class OptionalParasManager {
     public static Object[] checkParas(Class<?> receiver, String methodName, Object... args) {
         // gets all the valid methods
@@ -17,6 +19,7 @@ public class OptionalParasManager {
         for (Method method : receiver.getMethods()) {
             if (method.getName().equals(methodName)) methods.add(method);
         }
+
         Class<?>[] argumentTypes = CustomValueFilter.objectToClassArray(args);
 
         // checks whether there is anything that was found
@@ -33,7 +36,7 @@ public class OptionalParasManager {
         }
 
         if (!canAssignAny && foundSomething) {
-            System.out.println("Can't assign to any possible method implementation '" + methodName + "' args: " + Arrays.toString(args));
+            if (DEBUG) System.out.println("Can't assign to any possible method implementation '" + methodName + "' args: " + Arrays.toString(args));
         } else {
             return args;
         }
@@ -45,6 +48,7 @@ public class OptionalParasManager {
 
             Parameter[] paras = method.getParameters();
             if (paras.length > argumentTypes.length) {
+
                 // checks whether the first few parameters are correct
                 for (int i = 0; i < argumentTypes.length; i++) {
                     if (argumentTypes[i] == null || paras[i] != null && paras[i].getType().isAssignableFrom(argumentTypes[i]))
@@ -92,7 +96,7 @@ public class OptionalParasManager {
         if (paras.length != args.length) return false;
 
         for (int i = 0; i < paras.length; i++) {
-            if (!paras[i].isAssignableFrom(args[i].getClass())) return false;
+            if (args[i] != null && !paras[i].isAssignableFrom(args[i].getClass())) return false;
         }
 
         return true;

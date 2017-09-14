@@ -1,5 +1,6 @@
 package de.bloodworkxgaming.testclasses;
 
+import de.bloodworkxgaming.groovysandboxedlauncher.annotations.GSLOptional;
 import de.bloodworkxgaming.groovysandboxedlauncher.annotations.GSLWhitelistConstructor;
 import de.bloodworkxgaming.groovysandboxedlauncher.annotations.GSLWhitelistMember;
 import groovy.lang.Closure;
@@ -13,6 +14,11 @@ public class TestInterface {
     @GSLWhitelistMember
     public int getMagic() {
         return 2;
+    }
+
+    @GSLWhitelistMember
+    public void para(int b, @GSLOptional float c){
+        System.out.println(b + " --- " + c);
     }
 
     void with(int bla) {

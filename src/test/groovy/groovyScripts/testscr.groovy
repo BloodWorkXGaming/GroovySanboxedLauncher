@@ -33,6 +33,7 @@ println testInterface.getMagic()
 
 def testClass = new TestClass()
 println testClass.getMagic()
+println testClass.para(44)
 
 
 println TestClass.testParas(20)
