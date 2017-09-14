@@ -1,7 +1,5 @@
 package de.bloodworkxgaming.groovysandboxedlauncher.sandbox;
 
-import de.bloodworkxgaming.groovysandboxedlauncher.utils.StringUtils;
-
 import java.lang.reflect.Method;
 import java.util.*;
 
@@ -35,11 +33,11 @@ public class WhitelistRegistry {
         allowedMethods.add(new WhiteListedMethod(clazz, methodName, arguments));
     }
 
-    public void registerWildCardMethod(Class<?> clazz){
+    public void registerWildCardMethod(Class<?> clazz) {
         allowedMethods.add(new WhiteListedMethod(clazz, false, null, true, true));
     }
 
-    public void registerWildCardMethodWithoutClass(String functionName, boolean wildcardArguments, Class<?>... arguments){
+    public void registerWildCardMethodWithoutClass(String functionName, boolean wildcardArguments, Class<?>... arguments) {
         allowedMethods.add(new WhiteListedMethod(null, true, functionName, false, wildcardArguments, arguments));
     }
 
@@ -47,9 +45,6 @@ public class WhitelistRegistry {
     /**
      * Register methods as string (if it is not present in the current classpath)
      * Skips any wrongly formatted entries
-     *
-     * Identifier of the Mathod 'classname#methodname'
-     *                Method name can be * for any
      */
     public void registerMethod(String className, boolean isWildcardClass, String methodName, boolean isWildcardMethod, boolean isWildcardArguments, String... arguments) {
         try {
@@ -74,7 +69,7 @@ public class WhitelistRegistry {
         if (allowedMethods.contains(method)) return !invertMethodWhitelist; // true
 
 
-        if (!implementsFunction(clazz, methodName, args)){
+        if (!implementsFunction(clazz, methodName, args)) {
             if (isMethodWhitelisted(clazz.getSuperclass(), methodName, args)) return !invertMethodWhitelist; // true
 
             for (Class interfaceClass : clazz.getInterfaces()) {
@@ -87,16 +82,17 @@ public class WhitelistRegistry {
         return invertMethodWhitelist; // false
     }
 
-    private boolean implementsFunction(Class<?> clazz, String methodName, Class<?>... params){
+    private boolean implementsFunction(Class<?> clazz, String methodName, Class<?>... params) {
 
         outerLoop:
         for (Method method : clazz.getDeclaredMethods()) {
-            if (method.getName().equals(methodName)){
+            if (method.getName().equals(methodName)) {
                 Class<?>[] paraTypes = method.getParameterTypes();
                 if (paraTypes.length != params.length) continue;
 
                 for (int i = 0; i < paraTypes.length; i++) {
-                    if (!(params[i] == null && !paraTypes[i].isPrimitive()) || !paraTypes[i].isAssignableFrom(params[i])) continue outerLoop;
+                    if (!(params[i] == null && !paraTypes[i].isPrimitive()) || !paraTypes[i].isAssignableFrom(params[i]))
+                        continue outerLoop;
                 }
 
                 return true;
@@ -257,7 +253,7 @@ public class WhitelistRegistry {
     }
 
 
-    static class WhiteListedMethod{
+    static class WhiteListedMethod {
         Class<?> clazz;
         boolean isWildcardClass;
 
@@ -320,22 +316,22 @@ public class WhitelistRegistry {
 
         // Class objects in the map are a1
         // Class objects to compare to a2
-        private boolean classTypesEquals(Class<?>[] a1, Class<?>[] a2){
-            if (a1==a2)
+        private boolean classTypesEquals(Class<?>[] a1, Class<?>[] a2) {
+            if (a1 == a2)
                 return true;
-            if (a1==null || a2==null)
+            if (a1 == null || a2 == null)
                 return false;
 
             int length = a1.length;
             if (a2.length != length)
                 return false;
 
-            for (int i=0; i<length; i++) {
+            for (int i = 0; i < length; i++) {
                 Class<?> c1 = a1[i];
                 Class<?> c2 = a2[i];
                 System.out.println("c1 = " + c1);
                 System.out.println("c2 = " + c2);
-                if (c1 != null && c2 != null){
+                if (c1 != null && c2 != null) {
                     if (!c1.isAssignableFrom(c2)) return false;
                 }
             }

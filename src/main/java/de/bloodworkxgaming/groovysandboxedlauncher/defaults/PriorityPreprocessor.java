@@ -14,25 +14,25 @@ import de.bloodworkxgaming.groovysandboxedlauncher.preprocessor.PreprocessorActi
 public class PriorityPreprocessor extends PreprocessorActionBase {
     public static final String PREPROCESSOR_NAME = "priority";
     private Integer priority;
-    
+
     public PriorityPreprocessor(String fileName, String preprocessorLine, int lineIndex) {
         super(fileName, preprocessorLine, lineIndex);
-        
+
         String s = preprocessorLine.substring(PREPROCESSOR_NAME.length()).trim();
-        
+
         try {
             priority = Integer.parseInt(s);
-        }catch(NumberFormatException e){
+        } catch (NumberFormatException e) {
             priority = null;
         }
 
     }
-    
+
     @Override
     public void executeActionOnFind(GSLScriptFile scriptFile) {
         if (priority != null) scriptFile.setPriority(priority);
     }
-    
+
     @Override
     public String getPreprocessorName() {
         return PREPROCESSOR_NAME;

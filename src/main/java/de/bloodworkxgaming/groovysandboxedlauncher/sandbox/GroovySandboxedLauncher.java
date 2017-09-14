@@ -4,7 +4,6 @@ import de.bloodworkxgaming.groovysandboxedlauncher.compilercustomizer.ClassFunct
 import de.bloodworkxgaming.groovysandboxedlauncher.data.GSLScriptFile;
 import de.bloodworkxgaming.groovysandboxedlauncher.data.ScriptPathConfig;
 import de.bloodworkxgaming.groovysandboxedlauncher.preprocessor.PreprocessorManager;
-import de.bloodworkxgaming.groovysandboxedlauncher.utils.FileUtils;
 import groovy.lang.Binding;
 import groovy.lang.GroovyClassLoader;
 import groovy.lang.GroovyRuntimeException;
@@ -14,7 +13,6 @@ import groovy.util.ResourceException;
 import groovy.util.ScriptException;
 import org.codehaus.groovy.GroovyBugError;
 import org.codehaus.groovy.control.CompilerConfiguration;
-import org.codehaus.groovy.control.MultipleCompilationErrorsException;
 import org.codehaus.groovy.control.customizers.CompilationCustomizer;
 import org.kohsuke.groovy.sandbox.SandboxTransformer;
 import org.kohsuke.groovy.sandbox.impl.Checker;
@@ -80,8 +78,8 @@ public class GroovySandboxedLauncher {
         gslScriptFiles.sort(PreprocessorManager.SCRIPT_FILE_COMPARATOR);
 
         for (GSLScriptFile gslScriptFile : gslScriptFiles) {
-            if (gslScriptFile.isValidGroovyFile()){
-                if (gslScriptFile.isScriptCreationBlocked()){
+            if (gslScriptFile.isValidGroovyFile()) {
+                if (gslScriptFile.isScriptCreationBlocked()) {
                     System.out.println("Skipping script " + gslScriptFile + " due to preprocessors");
                     continue;
                 }
@@ -117,7 +115,7 @@ public class GroovySandboxedLauncher {
     // Don't use this unless there is a specific reason you need all of them
     // Will cause the scriptengine to crash as it doesn't know about the subfolders
     @Deprecated
-    private void collectScriptsRecoursive(){
+    private void collectScriptsRecoursive() {
         gslScriptFiles.clear();
         for (File path : scriptPathConfig.getScriptPathRoots()) {
             List<Path> pathList = null;
@@ -127,10 +125,10 @@ public class GroovySandboxedLauncher {
                 e.printStackTrace();
             }
 
-            if (pathList != null){
+            if (pathList != null) {
                 for (Path scriptPath : pathList) {
                     File file = scriptPath.toFile();
-                    if (file.isFile()){
+                    if (file.isFile()) {
                         gslScriptFiles.add(new GSLScriptFile(file, file.getName()));
                     }
                 }
@@ -138,7 +136,7 @@ public class GroovySandboxedLauncher {
         }
     }
 
-    private void collectScripts(){
+    private void collectScripts() {
         gslScriptFiles.clear();
         for (File path : scriptPathConfig.getScriptPathRoots()) {
             if (path == null) continue;

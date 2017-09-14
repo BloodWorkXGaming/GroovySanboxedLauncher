@@ -7,9 +7,8 @@ import groovy.lang.Script;
 import java.util.*;
 
 public class FunctionKnower {
-    private Map<ExtractedMethod, List<GSLScriptFile>> functionKnower = new HashMap<>();
     public static final List<GSLScriptFile> EMPTY_LIST = Collections.emptyList();
-
+    private Map<ExtractedMethod, List<GSLScriptFile>> functionKnower = new HashMap<>();
 
     /**
      * Adds every method to the the knower, He knows what script has which method

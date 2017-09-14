@@ -6,15 +6,15 @@ import java.util.List;
 public class EventList<T> {
     private List<IGSLEvent<T>> eventList = new ArrayList<>();
 
-    public void registerEvent(IGSLEvent<T> event){
+    public void registerEvent(IGSLEvent<T> event) {
         eventList.add(event);
     }
 
-    public void clear(){
+    public void clear() {
         eventList.clear();
     }
 
-    public void callOnEach(T eventObject){
+    public void callOnEach(T eventObject) {
         for (IGSLEvent<T> tigslEvent : eventList) {
             tigslEvent.handleEvent(eventObject);
         }

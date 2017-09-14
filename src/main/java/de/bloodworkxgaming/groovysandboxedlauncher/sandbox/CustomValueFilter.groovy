@@ -188,7 +188,7 @@ class CustomValueFilter extends GroovyValueFilter {
 
     }
 
-    private static Class<?>[] objectToClassArray(Object[] objects){
+    private static Class<?>[] objectToClassArray(Object[] objects) {
         Class<?>[] strings = new Class<?>[objects.length]
         for (int i = 0; i < objects.length; i++) {
             strings[i] = objects[i]?.getClass()

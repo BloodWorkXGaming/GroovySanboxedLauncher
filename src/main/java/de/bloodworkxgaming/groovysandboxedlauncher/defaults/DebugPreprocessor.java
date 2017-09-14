@@ -12,16 +12,16 @@ import de.bloodworkxgaming.groovysandboxedlauncher.preprocessor.PreprocessorActi
  */
 public class DebugPreprocessor extends PreprocessorActionBase {
     public static final String PREPROCESSOR_NAME = "debug";
-    
+
     public DebugPreprocessor(String fileName, String preprocessorLine, int lineIndex) {
         super(fileName, preprocessorLine, lineIndex);
     }
-    
+
     @Override
     public void executeActionOnFind(GSLScriptFile scriptFile) {
         scriptFile.setDebugEnabled(true);
     }
-    
+
     @Override
     public String getPreprocessorName() {
         return PREPROCESSOR_NAME;

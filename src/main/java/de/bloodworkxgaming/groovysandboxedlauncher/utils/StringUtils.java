@@ -9,7 +9,7 @@ public class StringUtils {
         return string.substring(0, 1).toLowerCase() + string.substring(1);
     }
 
-    public static String[] classArrayToStringArray(Class<?>[] classes){
+    public static String[] classArrayToStringArray(Class<?>[] classes) {
         String[] strings = new String[classes.length];
         for (int i = 0; i < classes.length; i++) {
             strings[i] = classes[i].getName();

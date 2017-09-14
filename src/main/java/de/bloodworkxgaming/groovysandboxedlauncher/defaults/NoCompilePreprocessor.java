@@ -17,13 +17,13 @@ public class NoCompilePreprocessor extends PreprocessorActionBase {
     public NoCompilePreprocessor(String fileName, String preprocessorLine, int lineIndex) {
         super(fileName, preprocessorLine, lineIndex);
     }
-    
+
     @Override
     public void executeActionOnFind(GSLScriptFile scriptFile) {
         scriptFile.setExecutionBlocked(true);
         scriptFile.setScriptCreationBlocked(true);
     }
-    
+
     @Override
     public String getPreprocessorName() {
         return PREPROCESSOR_NAME;

@@ -16,10 +16,14 @@ public class GSLScriptFile {
     private List<IPreprocessor> affectingPreprocessors = new ArrayList<>();
     private GroovySandboxedLauncher groovySandboxedLauncher;
 
-    /** Priority which can be assigned to script, within the same priority the load order is affected by filename*/
+    /**
+     * Priority which can be assigned to script, within the same priority the load order is affected by filename
+     */
     private int priority = 0;
 
-    /** Loader name gets provided so that it can only load specifc scripts, not all of them*/
+    /**
+     * Loader name gets provided so that it can only load specifc scripts, not all of them
+     */
     private String loaderName = "gsl";
 
     private boolean debugEnabled = false;
@@ -35,29 +39,20 @@ public class GSLScriptFile {
         isValidGroovyFile = file.getName().endsWith(".groovy");
     }
 
-
-    public void setPriority(int priority) {
-        this.priority = priority;
-    }
-
-    public void setLoaderName(String loaderName) {
-        this.loaderName = loaderName;
-    }
-
-    public void setDebugEnabled(boolean debugEnabled) {
-        this.debugEnabled = debugEnabled;
+    public boolean isExecutionBlocked() {
+        return executionBlocked;
     }
 
     public void setExecutionBlocked(boolean executionBlocked) {
         this.executionBlocked = executionBlocked;
     }
 
-    public boolean isExecutionBlocked() {
-        return executionBlocked;
-    }
-
     public boolean isDebugEnabled() {
         return debugEnabled;
+    }
+
+    public void setDebugEnabled(boolean debugEnabled) {
+        this.debugEnabled = debugEnabled;
     }
 
     public boolean isScriptCreationBlocked() {
@@ -72,8 +67,16 @@ public class GSLScriptFile {
         return loaderName;
     }
 
+    public void setLoaderName(String loaderName) {
+        this.loaderName = loaderName;
+    }
+
     public int getPriority() {
         return priority;
+    }
+
+    public void setPriority(int priority) {
+        this.priority = priority;
     }
 
     public String getName() {
