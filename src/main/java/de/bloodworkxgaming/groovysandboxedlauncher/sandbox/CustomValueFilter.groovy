@@ -68,6 +68,8 @@ class CustomValueFilter extends GroovyValueFilter {
     Object onStaticCall(GroovyInterceptor.Invoker invoker, Class receiver, String method, Object... args) throws Throwable {
         if (DEBUG) println("[STATIC METHOD] ${receiver.getName()}.${method.toString()}(${Arrays.toString(args)})")
 
+        args = OptionalParasManager.checkParas(receiver, method, args)
+
         if (whitelistRegistry.isMethodWhitelisted(receiver, method) || AnnotationManager.checkHasMethodAnnotation(receiver, method) || checkImplicitGetterWhitelisted(receiver, method)) {
             return super.onMethodCall(invoker, receiver, method, args)
         } else {
