@@ -21,7 +21,7 @@ public class AnnotationManager {
 
         for (Method method : clazz.getDeclaredMethods()) {
             if (method.getName().equals(methodName)) {
-                return method.isAnnotationPresent(GSLWhitelistMember.class);
+                if(method.isAnnotationPresent(GSLWhitelistMember.class)) return true;
             }
         }
 

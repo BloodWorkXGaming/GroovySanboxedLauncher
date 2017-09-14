@@ -2,6 +2,7 @@ package groovyScripts
 
 import de.bloodworkxgaming.groovysandboxedlauncher.annotations.GSLWhitelistMember
 import de.bloodworkxgaming.groovysandboxedlauncher.utils.FileUtils
+import de.bloodworkxgaming.testclasses.TestClass
 import de.bloodworkxgaming.testclasses.TestInterface
 
 //::priority 20
@@ -28,6 +29,10 @@ println TestClassGroovy.getTestInt()
 println recipes.getMagic()
 
 def testInterface = new TestInterface()
+println testInterface.getMagic()
+
+def testClass = new TestClass()
+println testClass.getMagic()
 
 
 // println String.valueOf(20)
