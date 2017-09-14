@@ -1,6 +1,10 @@
 package de.bloodworkxgaming.groovysandboxedlauncher.sandbox;
 
+import de.bloodworkxgaming.groovysandboxedlauncher.annotations.GSLTransformAnnotation;
 import de.bloodworkxgaming.groovysandboxedlauncher.compilercustomizer.ClassFunctionWhitelistAnnotatorTransformer;
+import de.bloodworkxgaming.groovysandboxedlauncher.compilercustomizer.OptionalChecker;
+import de.bloodworkxgaming.groovysandboxedlauncher.compilercustomizer.optionalparams.ImplicitCastTransformer;
+import de.bloodworkxgaming.groovysandboxedlauncher.data.GSLBaseScript;
 import de.bloodworkxgaming.groovysandboxedlauncher.data.GSLScriptFile;
 import de.bloodworkxgaming.groovysandboxedlauncher.data.ScriptPathConfig;
 import de.bloodworkxgaming.groovysandboxedlauncher.preprocessor.PreprocessorManager;
@@ -8,11 +12,14 @@ import groovy.lang.Binding;
 import groovy.lang.GroovyClassLoader;
 import groovy.lang.GroovyRuntimeException;
 import groovy.lang.Script;
+import groovy.transform.CompileStatic;
+import groovy.transform.TypeChecked;
 import groovy.util.GroovyScriptEngine;
 import groovy.util.ResourceException;
 import groovy.util.ScriptException;
 import org.codehaus.groovy.GroovyBugError;
 import org.codehaus.groovy.control.CompilerConfiguration;
+import org.codehaus.groovy.control.customizers.ASTTransformationCustomizer;
 import org.codehaus.groovy.control.customizers.CompilationCustomizer;
 import org.kohsuke.groovy.sandbox.SandboxTransformer;
 import org.kohsuke.groovy.sandbox.impl.Checker;
@@ -22,6 +29,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -55,9 +63,13 @@ public class GroovySandboxedLauncher {
         PreprocessorManager.registerOwnPreprocessors(preprocessorManager);
 
 
+        CompilerConfiguration conf = new CompilerConfiguration();
+        conf.addCompilationCustomizers(compilationCustomizers.toArray(new CompilationCustomizer[compilationCustomizers.size()]));
+        conf.setScriptBaseClass(GSLBaseScript.class.getName());
+
         try {
             scriptEngine = new GroovyScriptEngine(scriptPathConfig.getScriptPathRootStrings(), classLoader);
-            scriptEngine.setConfig(new CompilerConfiguration().addCompilationCustomizers(compilationCustomizers.toArray(new CompilationCustomizer[compilationCustomizers.size()])));
+            scriptEngine.setConfig(conf);
 
             new CustomValueFilter(whitelistRegistry, functionKnower).register();
 

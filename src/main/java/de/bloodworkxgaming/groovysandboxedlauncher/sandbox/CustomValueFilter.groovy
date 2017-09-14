@@ -45,12 +45,22 @@ class CustomValueFilter extends GroovyValueFilter {
 
     @Override
     Object onMethodCall(GroovyInterceptor.Invoker invoker, Object receiver, String method, Object... args) throws Throwable {
-        if (DEBUG) println("[METHOD] ${receiver.getClass().getName()}.${method.toString()}(${Arrays.toString(args)})")
+        Class<?> clazz
+        if (receiver instanceof Class<?>) {
+            clazz = receiver as Class<?>
+        } else {
+            clazz = receiver.getClass()
+        }
 
-        if (whitelistRegistry.isMethodWhitelisted(receiver.getClass(), method, objectToClassArray(args)) || AnnotationManager.checkHasMethodAnnotation(receiver.getClass(), method) || checkImplicitGetterWhitelisted(receiver.getClass(), method)) {
+        if (DEBUG) println("[METHOD] ${clazz.getName()}.${method.toString()}(${Arrays.toString(args)})")
+
+        // println "receiver = $receiver, method = $method"
+        args = OptionalParasManager.checkParas(clazz, method, args)
+
+        if (whitelistRegistry.isMethodWhitelisted(clazz, method, objectToClassArray(args)) || AnnotationManager.checkHasMethodAnnotation(clazz, method) || checkImplicitGetterWhitelisted(clazz, method)) {
             return super.onMethodCall(invoker, receiver, method, args)
         } else {
-            throw new SecurityException("method ${receiver.getClass().getName()}.$method(${StringUtils.classArrayToStringArray(objectToClassArray(args))}) is not allowed to be called")
+            throw new SecurityException("method ${clazz.getName()}.$method(${StringUtils.classArrayToStringArray(objectToClassArray(args))}) is not allowed to be called")
         }
     }
 
@@ -188,7 +198,7 @@ class CustomValueFilter extends GroovyValueFilter {
 
     }
 
-    private static Class<?>[] objectToClassArray(Object[] objects) {
+    public static Class<?>[] objectToClassArray(Object[] objects) {
         Class<?>[] strings = new Class<?>[objects.length]
         for (int i = 0; i < objects.length; i++) {
             strings[i] = objects[i]?.getClass()

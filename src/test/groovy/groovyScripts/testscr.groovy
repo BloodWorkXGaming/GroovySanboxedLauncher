@@ -35,6 +35,8 @@ def testClass = new TestClass()
 println testClass.getMagic()
 
 
+println TestClass.testParas(20)
+
 // println String.valueOf(20)
 
 // def f = new File("D:\\Users\\jonas\\Documents\\GitHub\\GroovySandboxedLauncher\\test\\groovyScripts\\testscr.groovy")
