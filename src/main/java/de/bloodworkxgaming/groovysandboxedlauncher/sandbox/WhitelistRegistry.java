@@ -329,8 +329,6 @@ public class WhitelistRegistry {
             for (int i = 0; i < length; i++) {
                 Class<?> c1 = a1[i];
                 Class<?> c2 = a2[i];
-                System.out.println("c1 = " + c1);
-                System.out.println("c2 = " + c2);
                 if (c1 != null && c2 != null) {
                     if (!c1.isAssignableFrom(c2)) return false;
                 }
