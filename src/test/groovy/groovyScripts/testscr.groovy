@@ -51,6 +51,10 @@ def blub (String bla){
 }
 
 
+def init(String s){
+    println "init: " + s
+}
+
 class TeCla{
     TeCla(){
         println "default"

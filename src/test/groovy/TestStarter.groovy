@@ -33,6 +33,11 @@ class TestStarter {
             loadScripts()
 
             runAllScripts()
+
+
+            String bla = "hi i am a init test string"
+
+            runFunctionAll("init", bla)
         }
     }
 

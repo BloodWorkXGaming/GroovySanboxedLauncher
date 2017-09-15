@@ -35,6 +35,10 @@ public class FunctionKnower {
         }
     }
 
+    public void dumpMap(){
+        functionKnower.forEach((extractedMethod, scriptFiles) -> System.out.println(extractedMethod + " = " + scriptFiles));
+    }
+
 
     public List<GSLScriptFile> getImplementingScripts(String name, int argumentCount) {
         ExtractedMethod extractedMethod = new ExtractedMethod(name, argumentCount);

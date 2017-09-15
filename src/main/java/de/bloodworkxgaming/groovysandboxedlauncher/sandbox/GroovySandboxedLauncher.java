@@ -55,7 +55,6 @@ public class GroovySandboxedLauncher {
 
         PreprocessorManager.registerOwnPreprocessors(preprocessorManager);
 
-
         CompilerConfiguration conf = new CompilerConfiguration();
         conf.addCompilationCustomizers(compilationCustomizers.toArray(new CompilationCustomizer[compilationCustomizers.size()]));
         conf.setScriptBaseClass(GSLBaseScript.class.getName());
@@ -115,6 +114,7 @@ public class GroovySandboxedLauncher {
         }
 
         functionKnower.extractMethods(gslScriptFiles);
+        // functionKnower.dumpMap();
     }
 
     // Don't use this unless there is a specific reason you need all of them

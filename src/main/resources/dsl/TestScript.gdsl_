@@ -1,0 +1,7 @@
+package dsl
+
+def ctx = context(ctype: Integer.class.getName())
+
+contributor (ctx) {
+    method(name: "getDaysFromNow", type: "Calendar")
+}
