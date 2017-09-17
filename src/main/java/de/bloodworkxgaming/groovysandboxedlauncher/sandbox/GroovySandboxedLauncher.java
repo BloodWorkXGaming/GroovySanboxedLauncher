@@ -5,10 +5,7 @@ import de.bloodworkxgaming.groovysandboxedlauncher.data.GSLBaseScript;
 import de.bloodworkxgaming.groovysandboxedlauncher.data.GSLScriptFile;
 import de.bloodworkxgaming.groovysandboxedlauncher.data.ScriptPathConfig;
 import de.bloodworkxgaming.groovysandboxedlauncher.preprocessor.PreprocessorManager;
-import groovy.lang.Binding;
-import groovy.lang.GroovyClassLoader;
-import groovy.lang.GroovyRuntimeException;
-import groovy.lang.Script;
+import groovy.lang.*;
 import groovy.util.GroovyScriptEngine;
 import groovy.util.ResourceException;
 import groovy.util.ScriptException;
@@ -17,13 +14,13 @@ import org.codehaus.groovy.control.CompilerConfiguration;
 import org.codehaus.groovy.control.customizers.CompilationCustomizer;
 import org.kohsuke.groovy.sandbox.SandboxTransformer;
 import org.kohsuke.groovy.sandbox.impl.Checker;
+import org.kohsuke.groovy.sandbox.impl.SandboxedMethodClosure;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class GroovySandboxedLauncher {
@@ -46,6 +43,10 @@ public class GroovySandboxedLauncher {
 
     private List<CompilationCustomizer> compilationCustomizers = new ArrayList<>();
 
+    private CustomValueFilter customValueFilter = new CustomValueFilter(whitelistRegistry, functionKnower);
+
+    private Set<Thread> registeredThreads = new HashSet<>();
+
     public void initSandbox() {
         if (!whitelistRegistry.isInvertedMethodWhitelist()) whitelistRegistry.registerMethod(Checker.class, "*");
 
@@ -62,8 +63,7 @@ public class GroovySandboxedLauncher {
         try {
             scriptEngine = new GroovyScriptEngine(scriptPathConfig.getScriptPathRootStrings(), classLoader);
             scriptEngine.setConfig(conf);
-
-            new CustomValueFilter(whitelistRegistry, functionKnower).register();
+            registerToCurrentThreadIfItIsntAlready();
 
             launchWrapper.init();
         } catch (IOException e) {
@@ -71,6 +71,13 @@ public class GroovySandboxedLauncher {
         }
     }
 
+    private void registerToCurrentThreadIfItIsntAlready(){
+        Thread currentThread = Thread.currentThread();
+        if (!registeredThreads.contains(currentThread)) {
+            customValueFilter.register();
+            registeredThreads.add(currentThread);
+        }
+    }
 
     /**
      * Loads all scripts in the given paths
@@ -167,6 +174,7 @@ public class GroovySandboxedLauncher {
      */
     public void runAllScripts() {
         resetAllToDefault();
+        registerToCurrentThreadIfItIsntAlready();
 
         for (GSLScriptFile gslScriptFile : functionKnower.getImplementingScripts("main", 1)) {
             if (gslScriptFile.isExecutionBlocked()) continue;
@@ -184,6 +192,7 @@ public class GroovySandboxedLauncher {
     }
 
     public void runFunctionAll(String name, Object... args) {
+        registerToCurrentThreadIfItIsntAlready();
 
         for (GSLScriptFile script : functionKnower.getImplementingScripts(name, args.length)) {
             if (script.isExecutionBlocked()) continue;
@@ -199,6 +208,17 @@ public class GroovySandboxedLauncher {
             }
         }
 
+    }
+
+    public void runClosure(Closure closure, Object... args){
+        registerToCurrentThreadIfItIsntAlready();
+
+        try {
+            Checker.checkedCall(closure, false, false, "call", args);
+        } catch (Throwable throwable) {
+            System.out.println("There was a problem running the closure " + closure + " with the arguments " + Arrays.toString(args));
+            throwable.printStackTrace();
+        }
     }
 
     /**

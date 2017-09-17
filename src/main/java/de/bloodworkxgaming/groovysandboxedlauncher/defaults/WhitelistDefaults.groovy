@@ -17,6 +17,7 @@ class WhitelistDefaults {
             registerMethod(GroovyObject.class, "print")
             registerMethod(GroovyObject.class, "printf")
             registerMethod(Object.class, "with", Closure)
+            registerMethod(Closure.class, "call")
 
             // --------- Useful collections ---------
             registerWildCardMethod(List.class)
