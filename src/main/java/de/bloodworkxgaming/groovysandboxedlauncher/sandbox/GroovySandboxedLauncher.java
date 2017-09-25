@@ -49,7 +49,7 @@ public class GroovySandboxedLauncher {
     private List<GSLScriptFile> gslScriptFiles = new ArrayList<>();
     private GroovyScriptEngine scriptEngine;
     private Binding binding = new Binding();
-    private ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+    private GroovyClassLoader classLoader = null;
 
     private List<CompilationCustomizer> compilationCustomizers = new ArrayList<>();
     private EventList<GSLResetEvent> resetEventEventList = new EventList<>();
@@ -70,7 +70,12 @@ public class GroovySandboxedLauncher {
         CompilerConfiguration conf = new CompilerConfiguration();
         conf.addCompilationCustomizers(compilationCustomizers.toArray(new CompilationCustomizer[compilationCustomizers.size()]));
         conf.setScriptBaseClass(GSLBaseScript.class.getName());
-        classLoader = new GroovyClassLoader(Thread.currentThread().getContextClassLoader(), conf);
+
+        if (classLoader == null){
+            CompilerConfiguration loaderConf = new CompilerConfiguration();
+            loaderConf.setScriptBaseClass(GSLBaseScript.class.getName());
+            classLoader = new GroovyClassLoader(Thread.currentThread().getContextClassLoader(), loaderConf);
+        }
 
         try {
             scriptEngine = new GroovyScriptEngine(scriptPathConfig.getScriptPathRootStrings(), classLoader);
@@ -138,8 +143,7 @@ public class GroovySandboxedLauncher {
         }
 
         functionKnower.extractMethods(gslScriptFiles);
-        System.out.println("Dumping function knower");
-        functionKnower.dumpMap();
+        if (DEBUG) functionKnower.dumpMap();
     }
 
     // Don't use this unless there is a specific reason you need all of them
@@ -251,7 +255,7 @@ public class GroovySandboxedLauncher {
         this.binding = binding;
     }
 
-    public void setClassLoader(ClassLoader classLoader) {
+    public void setClassLoader(GroovyClassLoader classLoader) {
         this.classLoader = classLoader;
     }
 
