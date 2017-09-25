@@ -4,6 +4,9 @@ import de.bloodworkxgaming.groovysandboxedlauncher.compilercustomizer.ClassFunct
 import de.bloodworkxgaming.groovysandboxedlauncher.data.GSLBaseScript;
 import de.bloodworkxgaming.groovysandboxedlauncher.data.GSLScriptFile;
 import de.bloodworkxgaming.groovysandboxedlauncher.data.ScriptPathConfig;
+import de.bloodworkxgaming.groovysandboxedlauncher.events.EventList;
+import de.bloodworkxgaming.groovysandboxedlauncher.events.GSLResetEvent;
+import de.bloodworkxgaming.groovysandboxedlauncher.events.IGSLEvent;
 import de.bloodworkxgaming.groovysandboxedlauncher.preprocessor.PreprocessorManager;
 import groovy.lang.*;
 import groovy.util.GroovyScriptEngine;
@@ -42,6 +45,7 @@ public class GroovySandboxedLauncher {
     private GroovyClassLoader classLoader = new GroovyClassLoader();
 
     private List<CompilationCustomizer> compilationCustomizers = new ArrayList<>();
+    private EventList<GSLResetEvent> resetEventEventList = new EventList<>();
 
     private CustomValueFilter customValueFilter = new CustomValueFilter(whitelistRegistry, functionKnower);
 
@@ -83,6 +87,7 @@ public class GroovySandboxedLauncher {
      * Loads all scripts in the given paths
      */
     public void loadScripts() {
+        resetAllToDefault();
         collectScripts();
         preprocessorManager.checkFilesForPreprocessors(gslScriptFiles);
 
@@ -162,10 +167,12 @@ public class GroovySandboxedLauncher {
         }
     }
 
-    //TODO: add event to each stage
     public void resetAllToDefault() {
-        // OredictUtils.resetToDefault();
-        // Pony.plugins.forEach(IPonyPlugin::resetToDefault);
+        resetEventEventList.callOnEach(new GSLResetEvent());
+    }
+
+    public void registerResetEvent(IGSLEvent<GSLResetEvent> event) {
+        resetEventEventList.registerEvent(event);
     }
 
     /**

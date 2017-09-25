@@ -36,6 +36,7 @@ class WhitelistDefaults {
             registerAllMethodsAndFields(Double.class)
             registerAllMethodsAndFields(Float.class)
 
+            registerMethod(Object.class, "toString")
             registerWildCardMethodWithoutClass("toString", false)
             registerWildCardMethodWithoutClass("equals", false)
             registerWildCardMethodWithoutClass("hashCode", false)
