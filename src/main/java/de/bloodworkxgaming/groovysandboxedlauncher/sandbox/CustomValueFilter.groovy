@@ -54,8 +54,16 @@ class CustomValueFilter extends GroovyValueFilter {
 
         if (DEBUG) println("[METHOD] ${clazz.getName()}.${method.toString()}(${Arrays.toString(args)})")
 
-        // println "receiver = $receiver, method = $method"
+        // Transforming println calls into the own logger commands
+        if ((method == "println" || method == "print") && Script.isAssignableFrom(clazz) && args.length <= 1){
+            println "Transforming calls from $clazz with params $args"
+            return super.onMethodCall(invoker, GroovySandboxedLauncher.LOGGER, "logInfo", args)
+        }
+
+        // checking for optional parameters and then changing them if needed
         args = OptionalParasManager.checkParas(clazz, method, args)
+
+
 
         if (whitelistRegistry.isMethodWhitelisted(clazz, method, objectToClassArray(args)) || AnnotationManager.checkHasMethodAnnotation(clazz, method) || checkImplicitGetterWhitelisted(clazz, method)) {
             return super.onMethodCall(invoker, receiver, method, args)

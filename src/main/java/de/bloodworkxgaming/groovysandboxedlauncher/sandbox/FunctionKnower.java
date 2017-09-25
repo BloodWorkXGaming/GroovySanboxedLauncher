@@ -36,7 +36,7 @@ public class FunctionKnower {
     }
 
     public void dumpMap(){
-        functionKnower.forEach((extractedMethod, scriptFiles) -> System.out.println(extractedMethod + " = " + scriptFiles));
+        functionKnower.forEach((extractedMethod, scriptFiles) -> GroovySandboxedLauncher.LOGGER.logInfo(extractedMethod + " = " + scriptFiles));
     }
 
 

@@ -7,6 +7,9 @@ import de.bloodworkxgaming.groovysandboxedlauncher.data.ScriptPathConfig;
 import de.bloodworkxgaming.groovysandboxedlauncher.events.EventList;
 import de.bloodworkxgaming.groovysandboxedlauncher.events.GSLResetEvent;
 import de.bloodworkxgaming.groovysandboxedlauncher.events.IGSLEvent;
+import de.bloodworkxgaming.groovysandboxedlauncher.logger.CombineLogger;
+import de.bloodworkxgaming.groovysandboxedlauncher.logger.ILogger;
+import de.bloodworkxgaming.groovysandboxedlauncher.logger.LogManager;
 import de.bloodworkxgaming.groovysandboxedlauncher.preprocessor.PreprocessorManager;
 import groovy.lang.*;
 import groovy.util.GroovyScriptEngine;
@@ -17,7 +20,6 @@ import org.codehaus.groovy.control.CompilerConfiguration;
 import org.codehaus.groovy.control.customizers.CompilationCustomizer;
 import org.kohsuke.groovy.sandbox.SandboxTransformer;
 import org.kohsuke.groovy.sandbox.impl.Checker;
-import org.kohsuke.groovy.sandbox.impl.SandboxedMethodClosure;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,6 +33,11 @@ public class GroovySandboxedLauncher {
      * Setting this option to true enables additional debug info
      */
     public static boolean DEBUG = false;
+    public static final LogManager LOG_MANAGER = new LogManager();
+    public static final ILogger LOGGER = new CombineLogger(LOG_MANAGER);
+    static {
+        LOG_MANAGER.registerLogger(LogManager.logger);
+    }
 
     public WhitelistRegistry whitelistRegistry = new WhitelistRegistry();
     public ScriptPathConfig scriptPathConfig = new ScriptPathConfig();
@@ -42,7 +49,7 @@ public class GroovySandboxedLauncher {
     private List<GSLScriptFile> gslScriptFiles = new ArrayList<>();
     private GroovyScriptEngine scriptEngine;
     private Binding binding = new Binding();
-    private GroovyClassLoader classLoader = new GroovyClassLoader();
+    private ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 
     private List<CompilationCustomizer> compilationCustomizers = new ArrayList<>();
     private EventList<GSLResetEvent> resetEventEventList = new EventList<>();
@@ -66,6 +73,7 @@ public class GroovySandboxedLauncher {
 
         try {
             scriptEngine = new GroovyScriptEngine(scriptPathConfig.getScriptPathRootStrings(), classLoader);
+
             scriptEngine.setConfig(conf);
             registerToCurrentThreadIfItIsntAlready();
 
@@ -94,33 +102,30 @@ public class GroovySandboxedLauncher {
         gslScriptFiles.sort(PreprocessorManager.SCRIPT_FILE_COMPARATOR);
 
         for (GSLScriptFile gslScriptFile : gslScriptFiles) {
+
             if (gslScriptFile.isValidGroovyFile()) {
                 if (gslScriptFile.isScriptCreationBlocked()) {
-                    System.out.println("Skipping script " + gslScriptFile + " due to preprocessors");
+                    GroovySandboxedLauncher.LOGGER.logInfo("Skipping script " + gslScriptFile + " due to preprocessors");
                     continue;
                 }
-                System.out.println("Handling groovy script " + gslScriptFile);
+                GroovySandboxedLauncher.LOGGER.logInfo("Handling groovy script " + gslScriptFile);
 
                 try {
                     Script script = scriptEngine.createScript(gslScriptFile.getName(), binding);
                     gslScriptFile.setScript(script);
 
                 } catch (ResourceException e) {
-                    System.out.println("Error while reading the file");
-                    e.printStackTrace();
+                    GroovySandboxedLauncher.LOGGER.logError("Error while reading the file", e);
                 } catch (ScriptException e) {
                     e.printStackTrace();
                 } catch (GroovyBugError e) {
-                    System.out.println(gslScriptFile.getName() + " couldn't get compiled because some function is not allowed: " + e.getMessage());
-                    e.printStackTrace();
+                    GroovySandboxedLauncher.LOGGER.logError(gslScriptFile.getName() + " couldn't get compiled because some function is not allowed: " + e.getMessage(), e);
                 } catch (GroovyRuntimeException e) {
                     if (e.getMessage().contains("Reason: java.lang.InstantiationException")) {
-                        System.out.println("Error while loading script [" + gslScriptFile.getName() + "]: ScriptFile that is only a class also needs a default constructor");
+                        GroovySandboxedLauncher.LOGGER.logError("Error while loading script [" + gslScriptFile.getName() + "]: ScriptFile that is only a class also needs a default constructor", e);
                     }
-                    e.printStackTrace();
                 } catch (Exception e) {
-                    System.out.println("Error while loading script [" + gslScriptFile.getName() + "]");
-                    e.printStackTrace();
+                    GroovySandboxedLauncher.LOGGER.logError("Error while loading script [" + gslScriptFile.getName() + "]", e);
                 }
             }
         }
@@ -186,12 +191,11 @@ public class GroovySandboxedLauncher {
         for (GSLScriptFile gslScriptFile : functionKnower.getImplementingScripts("main", 1)) {
             if (gslScriptFile.isExecutionBlocked()) continue;
             try {
-                System.out.println("launching " + gslScriptFile);
+                GroovySandboxedLauncher.LOGGER.logInfo("launching " + gslScriptFile);
                 LaunchWrapper.run(gslScriptFile.getScript());
 
             } catch (Exception e) {
-                System.out.println(gslScriptFile.toString() + " couldn't run lowest Script in File: " + e.getMessage());
-                e.printStackTrace();
+                GroovySandboxedLauncher.LOGGER.logError(gslScriptFile.toString() + " couldn't run lowest Script in File: " + e.getMessage(), e);
             }
         }
 
@@ -207,11 +211,8 @@ public class GroovySandboxedLauncher {
             try {
                 LaunchWrapper.invokeMethod(script.getScript(), name, args);
 
-            } catch (GroovyBugError e) {
-                System.out.println(script.toString() + " couldn't run function [" + name + "]: \n" + e.getMessage());
             } catch (Exception e) {
-                System.out.println(script.toString() + " couldn't run function [" + name + "]: \n" + e.getMessage());
-                e.printStackTrace();
+                GroovySandboxedLauncher.LOGGER.logError(script.toString() + " couldn't run function [" + name + "]: \n" + e.getMessage(), e);
             }
         }
 
@@ -223,8 +224,7 @@ public class GroovySandboxedLauncher {
         try {
             Checker.checkedCall(closure, false, false, "call", args);
         } catch (Throwable throwable) {
-            System.out.println("There was a problem running the closure " + closure + " with the arguments " + Arrays.toString(args));
-            throwable.printStackTrace();
+            GroovySandboxedLauncher.LOGGER.logError("There was a problem running the closure " + closure + " with the arguments " + Arrays.toString(args), throwable);
         }
     }
 
@@ -243,7 +243,7 @@ public class GroovySandboxedLauncher {
         this.binding = binding;
     }
 
-    public void setClassLoader(GroovyClassLoader classLoader) {
+    public void setClassLoader(ClassLoader classLoader) {
         this.classLoader = classLoader;
     }
 

@@ -48,7 +48,7 @@ public class OptionalParasManager {
         }
 
         if (!canAssignAny && foundSomething) {
-            if (DEBUG) System.out.println("Can't assign to any possible method implementation '" + methodName + "' args: " + Arrays.toString(args));
+            if (DEBUG) GroovySandboxedLauncher.LOGGER.logWarning("Can't assign to any possible method implementation '" + methodName + "' args: " + Arrays.toString(args));
         } else {
             return args;
         }

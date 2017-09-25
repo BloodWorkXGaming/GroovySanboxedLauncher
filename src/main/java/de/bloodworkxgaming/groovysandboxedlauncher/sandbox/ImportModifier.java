@@ -20,7 +20,7 @@ public class ImportModifier {
         if (checkClassExists(className)) {
             importCustomizer.addImport(alias, className);
         } else {
-            if (DEBUG) System.out.println("Can't import class " + className + " as " + alias);
+            if (DEBUG) GroovySandboxedLauncher.LOGGER.logWarning("Can't import class " + className + " as " + alias);
         }
     }
 
@@ -35,7 +35,7 @@ public class ImportModifier {
         if (checkFieldExists(className, fieldName)) {
             importCustomizer.addStaticImport(className, fieldName);
         } else {
-            if (DEBUG) System.out.println("Can't import static field " + fieldName + "of class " + className);
+            if (DEBUG) GroovySandboxedLauncher.LOGGER.logWarning("Can't import static field " + fieldName + "of class " + className);
         }
     }
 
@@ -50,7 +50,7 @@ public class ImportModifier {
             if (checkClassExists(className)) {
                 importCustomizer.addStaticStars(className);
             } else {
-                if (DEBUG) System.out.println("Can't import static star " + className);
+                if (DEBUG) GroovySandboxedLauncher.LOGGER.logWarning("Can't import static star " + className);
             }
         }
     }
@@ -68,7 +68,7 @@ public class ImportModifier {
             importCustomizer.addStaticImport(alias, className, fieldName);
         } else {
             if (DEBUG)
-                System.out.println("Can't import static field " + fieldName + "of class " + className + " as " + alias);
+                GroovySandboxedLauncher.LOGGER.logWarning("Can't import static field " + fieldName + "of class " + className + " as " + alias);
         }
     }
 
@@ -83,7 +83,7 @@ public class ImportModifier {
             if (checkClassExists(className)) {
                 importCustomizer.addImports(className);
             } else {
-                if (DEBUG) System.out.println("Can't import class " + className);
+                if (DEBUG) GroovySandboxedLauncher.LOGGER.logWarning("Can't import class " + className);
             }
         }
 
@@ -100,7 +100,7 @@ public class ImportModifier {
             if (checkPackageExists(packageName)) {
                 importCustomizer.addStarImports(packageName);
             } else {
-                if (DEBUG) System.out.println("Can't star import package " + packageName);
+                if (DEBUG) GroovySandboxedLauncher.LOGGER.logWarning("Can't star import package " + packageName);
             }
         }
 
@@ -115,7 +115,7 @@ public class ImportModifier {
         if (pack != null) {
             return true;
         } else {
-            if (DEBUG) System.out.println("Can't retrieve package " + importName);
+            if (DEBUG) GroovySandboxedLauncher.LOGGER.logWarning("Can't retrieve package " + importName);
             return false;
         }
     }
@@ -125,7 +125,7 @@ public class ImportModifier {
             Class.forName(className);
             return true;
         } catch (ClassNotFoundException e) {
-            if (DEBUG) System.out.println("Can't retrieve class " + className);
+            if (DEBUG) GroovySandboxedLauncher.LOGGER.logWarning("Can't retrieve class " + className);
             return false;
         }
     }
@@ -136,10 +136,10 @@ public class ImportModifier {
             for (Field field : clazz.getFields()) {
                 if (field.getName().equals(fieldName)) return true;
             }
-            if (DEBUG) System.out.println("Can't retrieve Field name " + fieldName + " of class " + className);
+            if (DEBUG) GroovySandboxedLauncher.LOGGER.logWarning("Can't retrieve Field name " + fieldName + " of class " + className);
             return false;
         } catch (ClassNotFoundException e) {
-            if (DEBUG) System.out.println("Can't retrieve class " + className);
+            if (DEBUG) GroovySandboxedLauncher.LOGGER.logWarning("Can't retrieve class " + className);
             return false;
         }
     }

@@ -55,7 +55,7 @@ public class WhitelistRegistry {
 
             allowedMethods.add(new WhiteListedMethod(Class.forName(className), isWildcardClass, methodName, isWildcardMethod, isWildcardArguments, classes));
         } catch (ClassNotFoundException e) {
-            System.out.println("Couldn't find a Class while trying to register Method to whitelist:\n" + e.getMessage());
+            GroovySandboxedLauncher.LOGGER.logWarning("Couldn't find a Class while trying to register Method to whitelist:\n" + e.getMessage());
         }
     }
 

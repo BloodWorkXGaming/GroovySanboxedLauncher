@@ -7,6 +7,7 @@ import de.bloodworkxgaming.testclasses.TestInterface
 
 //::priority 20
 println "hi".setNBT("blabla")
+
 def bla = [29, 20]
 
 println(bla)
@@ -42,6 +43,8 @@ println TestClass.testParas(20)
 
 // def f = new File("D:\\Users\\jonas\\Documents\\GitHub\\GroovySandboxedLauncher\\test\\groovyScripts\\testscr.groovy")
 // println(f.toString())
+
+println("hihi")
 
 
 def tecla = new TeCla("D:\\Users\\jonas\\Documents\\GitHub\\GroovySandboxedLauncher\\test\\groovyScripts\\testfile")

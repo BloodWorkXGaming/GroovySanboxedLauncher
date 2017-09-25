@@ -4,6 +4,7 @@ import de.bloodworkxgaming.groovysandboxedlauncher.data.GSLScriptFile;
 import de.bloodworkxgaming.groovysandboxedlauncher.defaults.*;
 import de.bloodworkxgaming.groovysandboxedlauncher.events.EventList;
 import de.bloodworkxgaming.groovysandboxedlauncher.events.IGSLEvent;
+import de.bloodworkxgaming.groovysandboxedlauncher.sandbox.GroovySandboxedLauncher;
 
 import java.io.*;
 import java.util.*;
@@ -113,8 +114,7 @@ public class PreprocessorManager {
 
             }
         } catch (IOException e) {
-            System.out.println("Could not read the preprocessors in " + filename);
-            e.printStackTrace();
+            GroovySandboxedLauncher.LOGGER.logError("Could not read the preprocessors in " + filename, e);
         }
 
         executePostActions(scriptFile);
