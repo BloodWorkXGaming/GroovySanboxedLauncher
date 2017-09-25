@@ -6,7 +6,13 @@ public interface ILogger {
 
     void logInfo(String message);
 
-    default void logInfo(Object message){
+    default void logInfo(String className, Object message){
+        logScript(className, String.valueOf(message));
+    }
+
+    void logScript(String className, String message);
+
+    default void logScript(Object message){
         logInfo(String.valueOf(message));
     }
 

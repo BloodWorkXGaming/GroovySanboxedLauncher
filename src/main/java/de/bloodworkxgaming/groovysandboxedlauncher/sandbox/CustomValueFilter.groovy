@@ -58,7 +58,12 @@ class CustomValueFilter extends GroovyValueFilter {
         // Transforming println calls into the own logger commands
         if ((method == "println" || method == "print") && GroovyObject.isAssignableFrom(clazz) && args.length <= 1){
             if (DEBUG) GroovySandboxedLauncher.LOGGER.logInfo("Transforming calls from $clazz with params $args")
-            return super.onMethodCall(invoker, GroovySandboxedLauncher.LOGGER, "logInfo", args)
+            Object[] newArgs = new Object[args.length + 1]
+            newArgs[0] = clazz.name
+            for (int i = 0; i < args.length; i++) {
+                newArgs[i + 1] = args[i]
+            }
+            return super.onMethodCall(invoker, GroovySandboxedLauncher.LOGGER, "logInfo", newArgs)
         }
 
         // checking for optional parameters and then changing them if needed

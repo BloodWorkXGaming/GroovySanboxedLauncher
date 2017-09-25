@@ -20,6 +20,11 @@ public class CombineLogger implements ILogger {
     }
 
     @Override
+    public void logScript(String className, String message) {
+        loggers.forEach(logger -> logger.logScript(className, message));
+
+    }
+    @Override
     public void logWarning(String message) {
         loggers.forEach(logger -> logger.logWarning(message));
     }

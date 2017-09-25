@@ -13,8 +13,8 @@ public class StdOutConsoleLogger implements ILogger{
     }
 
     @Override
-    public void logInfo(Object message){
-        System.out.println("[INFO] " + String.valueOf(message));
+    public void logScript(String className, String message) {
+        System.out.println("[SCRIPT][" + className + "] " + message);
     }
 
     @Override
