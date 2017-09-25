@@ -70,6 +70,7 @@ public class GroovySandboxedLauncher {
         CompilerConfiguration conf = new CompilerConfiguration();
         conf.addCompilationCustomizers(compilationCustomizers.toArray(new CompilationCustomizer[compilationCustomizers.size()]));
         conf.setScriptBaseClass(GSLBaseScript.class.getName());
+        classLoader = new GroovyClassLoader(Thread.currentThread().getContextClassLoader(), conf);
 
         try {
             scriptEngine = new GroovyScriptEngine(scriptPathConfig.getScriptPathRootStrings(), classLoader);
@@ -102,17 +103,23 @@ public class GroovySandboxedLauncher {
         gslScriptFiles.sort(PreprocessorManager.SCRIPT_FILE_COMPARATOR);
 
         for (GSLScriptFile gslScriptFile : gslScriptFiles) {
-
             if (gslScriptFile.isValidGroovyFile()) {
                 if (gslScriptFile.isScriptCreationBlocked()) {
                     GroovySandboxedLauncher.LOGGER.logInfo("Skipping script " + gslScriptFile + " due to preprocessors");
                     continue;
                 }
-                GroovySandboxedLauncher.LOGGER.logInfo("Handling groovy script " + gslScriptFile);
+                GroovySandboxedLauncher.LOGGER.logInfo("Loading groovy script " + gslScriptFile);
 
                 try {
-                    Script script = scriptEngine.createScript(gslScriptFile.getName(), binding);
-                    gslScriptFile.setScript(script);
+                    try {
+                        Script script = scriptEngine.createScript(gslScriptFile.getName(), binding);
+                        gslScriptFile.setScript(script);
+
+                    }catch (Exception e){
+                        System.out.println("gslScriptFile = " + e);
+                        e.printStackTrace();
+                        throw e;
+                    }
 
                 } catch (ResourceException e) {
                     GroovySandboxedLauncher.LOGGER.logError("Error while reading the file", e);
@@ -131,7 +138,8 @@ public class GroovySandboxedLauncher {
         }
 
         functionKnower.extractMethods(gslScriptFiles);
-        // functionKnower.dumpMap();
+        System.out.println("Dumping function knower");
+        functionKnower.dumpMap();
     }
 
     // Don't use this unless there is a specific reason you need all of them
@@ -191,7 +199,7 @@ public class GroovySandboxedLauncher {
         for (GSLScriptFile gslScriptFile : functionKnower.getImplementingScripts("main", 1)) {
             if (gslScriptFile.isExecutionBlocked()) continue;
             try {
-                GroovySandboxedLauncher.LOGGER.logInfo("launching " + gslScriptFile);
+                GroovySandboxedLauncher.LOGGER.logInfo("Running script " + gslScriptFile);
                 LaunchWrapper.run(gslScriptFile.getScript());
 
             } catch (Exception e) {
