@@ -180,45 +180,26 @@ public abstract class GroovyInterceptor {
         Object call(Object receiver, String method, Object... args) throws Throwable;
     }
     
-//    public void addToGlobal() {
-//        globalInterceptors.add(this);
-//    }
-//
-//    public void removeFromGlobal() {
-//        globalInterceptors.remove(this);
-//    }
 
     /**
      * Registers this interceptor to the current thread's interceptor list.
      */
     public void register() {
-        threadInterceptors.get().add(this);
+        interceptors.add(this);
     }
 
     /**
      * Reverses the earlier effect of {@link #register()}
      */
     public void unregister() {
-        threadInterceptors.get().remove(this);
+        interceptors.remove(this);
     }
 
-    private static final ThreadLocal<List<GroovyInterceptor>> threadInterceptors = new ThreadLocal<List<GroovyInterceptor>>() {
-        @Override
-        protected List<GroovyInterceptor> initialValue() {
-            return new CopyOnWriteArrayList<GroovyInterceptor>();
-        }
-    };
+    private static final List<GroovyInterceptor> interceptors = new CopyOnWriteArrayList<>();
 
-    private static final ThreadLocal<List<GroovyInterceptor>> threadInterceptorsView = new ThreadLocal<List<GroovyInterceptor>>() {
-        @Override
-        protected List<GroovyInterceptor> initialValue() {
-            return Collections.unmodifiableList(threadInterceptors.get());
-        }
-    };
-    
-//    private static final List<GroovyInterceptor> globalInterceptors = new CopyOnWriteArrayList<GroovyInterceptor>();
-    
+    private static final List<GroovyInterceptor> interceptorsView = Collections.unmodifiableList(interceptors);
+
     public static List<GroovyInterceptor> getApplicableInterceptors() {
-        return threadInterceptorsView.get();
+        return interceptorsView;
     }
 }

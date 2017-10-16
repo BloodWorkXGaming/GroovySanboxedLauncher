@@ -14,7 +14,7 @@ import static org.codehaus.groovy.syntax.Types.*;
  * @see Types
  */
 public class Ops {
-    private static final Map<Integer,Integer> compoundAssignmentToBinaryOperator = new HashMap<Integer, Integer>();
+    private static final Map<Integer,Integer> compoundAssignmentToBinaryOperator = new HashMap<>();
 
     public static int compoundAssignmentToBinaryOperator(int type) {
         Integer o = compoundAssignmentToBinaryOperator.get(type);
@@ -22,7 +22,7 @@ public class Ops {
         return o;
     }
 
-    private static final Map<Integer,String> binaryOperatorMethods = new HashMap<Integer, String>();
+    private static final Map<Integer,String> binaryOperatorMethods = new HashMap<>();
 
     public static String binaryOperatorMethods(int type) {
         String v = binaryOperatorMethods.get(type);
