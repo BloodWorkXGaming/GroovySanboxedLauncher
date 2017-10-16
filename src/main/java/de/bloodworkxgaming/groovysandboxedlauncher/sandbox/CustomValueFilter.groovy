@@ -74,7 +74,8 @@ class CustomValueFilter extends GroovyValueFilter {
         if (whitelistRegistry.isMethodWhitelisted(clazz, method, objectToClassArray(args)) || AnnotationManager.checkHasMethodAnnotation(clazz, method) || checkImplicitGetterWhitelisted(clazz, method)) {
             return super.onMethodCall(invoker, receiver, method, args)
         } else {
-            throw new SecurityException("method ${clazz.getName()}.$method(${StringUtils.classArrayToStringArray(objectToClassArray(args))}) is not allowed to be called")
+            throw new SecurityException("method ${clazz.getName()}.$method(${StringUtils.classArrayToStringArray(objectToClassArray(args))}) is not allowed to be called\n"
+                    + "params: $args")
         }
     }
 
