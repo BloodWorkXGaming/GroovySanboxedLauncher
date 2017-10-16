@@ -1,7 +1,6 @@
 package org.kohsuke.groovy.sandbox.impl;
 
 import org.kohsuke.groovy.sandbox.GroovyInterceptor;
-import org.kohsuke.groovy.sandbox.GroovyInterceptor.Invoker;
 
 import java.util.Collections;
 import java.util.Iterator;

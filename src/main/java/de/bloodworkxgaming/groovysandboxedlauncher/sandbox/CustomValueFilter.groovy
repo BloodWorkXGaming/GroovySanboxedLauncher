@@ -2,13 +2,12 @@ package de.bloodworkxgaming.groovysandboxedlauncher.sandbox
 
 import de.bloodworkxgaming.groovysandboxedlauncher.utils.StringUtils
 import groovy.transform.CompileStatic
-import org.kohsuke.groovy.sandbox.GroovyInterceptor
 import org.kohsuke.groovy.sandbox.GroovyValueFilter
+import org.kohsuke.groovy.sandbox.impl.Invoker
 
 import static de.bloodworkxgaming.groovysandboxedlauncher.sandbox.GroovySandboxedLauncher.DEBUG
 
 @CompileStatic
-@SuppressWarnings("UnnecessaryQualifiedReference")
 class CustomValueFilter extends GroovyValueFilter {
     public boolean enableImplicitPropertySupport = true
 
@@ -32,7 +31,7 @@ class CustomValueFilter extends GroovyValueFilter {
     }
 
     @Override
-    Object onNewInstance(GroovyInterceptor.Invoker invoker, Class receiver, Object... args) throws Throwable {
+    Object onNewInstance(Invoker invoker, Class receiver, Object... args) throws Throwable {
         if (DEBUG) println("[CONSTRUCTOR] ${receiver.getName()} : ${Arrays.toString(args)}")
 
         if (whitelistRegistry.isConstructorWhitelisted(receiver) || AnnotationManager.checkHasConstructorAnnotation(receiver)) {
@@ -44,7 +43,7 @@ class CustomValueFilter extends GroovyValueFilter {
     }
 
     @Override
-    Object onMethodCall(GroovyInterceptor.Invoker invoker, Object receiver, String method, Object... args) throws Throwable {
+    Object onMethodCall(Invoker invoker, Object receiver, String method, Object... args) throws Throwable {
         Class<?> clazz
         if (receiver instanceof Class<?>) {
             clazz = receiver as Class<?>
@@ -54,9 +53,8 @@ class CustomValueFilter extends GroovyValueFilter {
 
         if (DEBUG) println("[METHOD] ${clazz.getName()}.${method.toString()}(${Arrays.toString(args)})")
 
-
         // Transforming println calls into the own logger commands
-        if ((method == "println" || method == "print") && GroovyObject.isAssignableFrom(clazz) && args.length <= 1){
+        if ((method == "println" || method == "print") && GroovyObject.isAssignableFrom(clazz) && args.length <= 1) {
             if (DEBUG) GroovySandboxedLauncher.LOGGER.logInfo("Transforming calls from $clazz with params $args")
             Object[] newArgs = new Object[args.length + 1]
             newArgs[0] = clazz.name
@@ -80,7 +78,7 @@ class CustomValueFilter extends GroovyValueFilter {
     }
 
     @Override
-    Object onStaticCall(GroovyInterceptor.Invoker invoker, Class receiver, String method, Object... args) throws Throwable {
+    Object onStaticCall(Invoker invoker, Class receiver, String method, Object... args) throws Throwable {
         if (DEBUG) println("[STATIC METHOD] ${receiver.getName()}.${method.toString()}(${Arrays.toString(args)})")
 
         args = OptionalParasManager.checkParas(receiver, method, args)
@@ -93,7 +91,7 @@ class CustomValueFilter extends GroovyValueFilter {
     }
 
     @Override
-    Object onGetProperty(GroovyInterceptor.Invoker invoker, Object receiver, String property) throws Throwable {
+    Object onGetProperty(Invoker invoker, Object receiver, String property) throws Throwable {
         Class<?> clazz
         if (receiver instanceof Class<?>) {
             clazz = receiver as Class<?>
@@ -112,7 +110,7 @@ class CustomValueFilter extends GroovyValueFilter {
     }
 
     @Override
-    Object onSetProperty(GroovyInterceptor.Invoker invoker, Object receiver, String property, Object value) throws Throwable {
+    Object onSetProperty(Invoker invoker, Object receiver, String property, Object value) throws Throwable {
         Class<?> clazz
         if (receiver instanceof Class<?>) {
             clazz = receiver as Class<?>
@@ -130,7 +128,7 @@ class CustomValueFilter extends GroovyValueFilter {
     }
 
     @Override
-    void onSuperConstructor(GroovyInterceptor.Invoker invoker, Class receiver, Object... args) throws Throwable {
+    void onSuperConstructor(Invoker invoker, Class receiver, Object... args) throws Throwable {
         if (DEBUG) println("[SUPER CONSTRUCTOR] ${receiver.getName()} : ${Arrays.toString(args)}")
 
         if (whitelistRegistry.isConstructorWhitelisted(receiver) || AnnotationManager.checkHasConstructorAnnotation(receiver)) {
@@ -141,7 +139,7 @@ class CustomValueFilter extends GroovyValueFilter {
     }
 
     @Override
-    Object onSuperCall(GroovyInterceptor.Invoker invoker, Class senderType, Object receiver, String method, Object... args) throws Throwable {
+    Object onSuperCall(Invoker invoker, Class senderType, Object receiver, String method, Object... args) throws Throwable {
         if (DEBUG) println("[SUPER METHOD] ${receiver.getClass().getSuperclass().getName()}.${method.toString()}(${Arrays.toString(args)})")
         println "Sendertype $senderType"
 
@@ -153,7 +151,7 @@ class CustomValueFilter extends GroovyValueFilter {
     }
 
     @Override
-    Object onGetAttribute(GroovyInterceptor.Invoker invoker, Object receiver, String attribute) throws Throwable {
+    Object onGetAttribute(Invoker invoker, Object receiver, String attribute) throws Throwable {
         Class<?> clazz
         if (receiver instanceof Class<?>) {
             clazz = receiver as Class<?>
@@ -172,7 +170,7 @@ class CustomValueFilter extends GroovyValueFilter {
     }
 
     @Override
-    Object onSetAttribute(GroovyInterceptor.Invoker invoker, Object receiver, String attribute, Object value) throws Throwable {
+    Object onSetAttribute(Invoker invoker, Object receiver, String attribute, Object value) throws Throwable {
         Class<?> clazz
         if (receiver instanceof Class<?>) {
             clazz = receiver as Class<?>

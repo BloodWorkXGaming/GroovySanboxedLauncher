@@ -1,5 +1,7 @@
 package org.kohsuke.groovy.sandbox;
 
+import org.kohsuke.groovy.sandbox.impl.Invoker;
+
 /**
  * {@link GroovyInterceptor} that looks at individual values that are coming into/out of a call,
  * without regard to any context.
