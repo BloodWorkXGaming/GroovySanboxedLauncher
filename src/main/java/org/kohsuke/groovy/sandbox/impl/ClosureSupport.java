@@ -56,6 +56,7 @@ final class ClosureSupport {
                 // closureTargets = Collections.emptyList();
         }
 
+        // In case we are inside of a nested Closure we have to keep the other Delegates of our Owner(s) in mind
         if (owner instanceof Closure) {
             closureTargets.addAll(targetsOf((Closure) owner));
         }
