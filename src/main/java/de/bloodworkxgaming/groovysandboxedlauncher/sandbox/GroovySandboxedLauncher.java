@@ -56,7 +56,6 @@ public class GroovySandboxedLauncher {
 
     private CustomValueFilter customValueFilter = new CustomValueFilter(whitelistRegistry, functionKnower);
 
-    private Set<Thread> registeredThreads = new HashSet<>();
 
     public void initSandbox() {
         if (!whitelistRegistry.isInvertedMethodWhitelist()) whitelistRegistry.registerMethod(Checker.class, "*");
@@ -81,7 +80,7 @@ public class GroovySandboxedLauncher {
             scriptEngine = new GroovyScriptEngine(scriptPathConfig.getScriptPathRootStrings(), classLoader);
 
             scriptEngine.setConfig(conf);
-            registerToCurrentThreadIfItIsntAlready();
+            customValueFilter.register();
 
             launchWrapper.init();
         } catch (IOException e) {
@@ -89,13 +88,6 @@ public class GroovySandboxedLauncher {
         }
     }
 
-    private void registerToCurrentThreadIfItIsntAlready(){
-        Thread currentThread = Thread.currentThread();
-        if (!registeredThreads.contains(currentThread)) {
-            customValueFilter.register();
-            registeredThreads.add(currentThread);
-        }
-    }
 
     /**
      * Loads all scripts in the given paths
@@ -198,7 +190,6 @@ public class GroovySandboxedLauncher {
      */
     public void runAllScripts() {
         resetAllToDefault();
-        registerToCurrentThreadIfItIsntAlready();
 
         for (GSLScriptFile gslScriptFile : functionKnower.getImplementingScripts("main", 1)) {
             if (gslScriptFile.isExecutionBlocked()) continue;
@@ -215,8 +206,6 @@ public class GroovySandboxedLauncher {
     }
 
     public void runFunctionAll(String name, Object... args) {
-        registerToCurrentThreadIfItIsntAlready();
-
         for (GSLScriptFile script : functionKnower.getImplementingScripts(name, args.length)) {
             if (script.isExecutionBlocked()) continue;
 
@@ -231,8 +220,6 @@ public class GroovySandboxedLauncher {
     }
 
     public void runClosure(Closure closure, Object... args){
-        registerToCurrentThreadIfItIsntAlready();
-
         try {
             Checker.checkedCall(closure, false, false, "call", args);
         } catch (Throwable throwable) {

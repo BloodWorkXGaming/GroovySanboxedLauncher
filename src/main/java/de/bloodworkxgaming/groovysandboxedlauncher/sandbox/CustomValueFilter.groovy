@@ -193,27 +193,37 @@ class CustomValueFilter extends GroovyValueFilter {
     // can maybe fail on inverted whitelist
     private boolean checkImplicitFieldWhitelisted(Class<?> clazz, String fieldName, boolean isGetter) {
         String method
+        String methodIs
         if (isGetter) {
             method = "get${StringUtils.capitalize(fieldName)}"
+            methodIs = "is${StringUtils.capitalize(fieldName)}"
         } else {
             method = "set${StringUtils.capitalize(fieldName)}"
         }
 
-        return enableImplicitPropertySupport && (whitelistRegistry.isMethodWhitelisted(clazz, method) || AnnotationManager.checkHasMethodAnnotation(clazz, method))
+        return enableImplicitPropertySupport &&
+                (whitelistRegistry.isMethodWhitelisted(clazz, method) || AnnotationManager.checkHasMethodAnnotation(clazz, method) ||
+                        methodIs != null && ( whitelistRegistry.isMethodWhitelisted(clazz, methodIs) || AnnotationManager.checkHasMethodAnnotation(clazz, methodIs))
+                )
     }
 
     private boolean checkImplicitGetterWhitelisted(Class<?> clazz, String method) {
+        String fieldName
+
         if (method.startsWith("get") || method.startsWith("set")) {
-            String fieldName = method.substring(3)
-            return enableImplicitPropertySupport && (whitelistRegistry.isFieldWhitelisted(clazz, fieldName) || AnnotationManager.checkHasFieldAnnotation(clazz, fieldName)
-                    || whitelistRegistry.isFieldWhitelisted(clazz, StringUtils.lowercaseFirstLetter(fieldName)) || AnnotationManager.checkHasFieldAnnotation(clazz, StringUtils.lowercaseFirstLetter(fieldName)))
+            fieldName = method.substring(3)
         }
 
-        return false
+        if (method.startsWith("is")) {
+            fieldName = method.substring(2)
+        }
+
+        return fieldName != null && enableImplicitPropertySupport && (whitelistRegistry.isFieldWhitelisted(clazz, fieldName) || AnnotationManager.checkHasFieldAnnotation(clazz, fieldName)
+                || whitelistRegistry.isFieldWhitelisted(clazz, StringUtils.lowercaseFirstLetter(fieldName)) || AnnotationManager.checkHasFieldAnnotation(clazz, StringUtils.lowercaseFirstLetter(fieldName)))
 
     }
 
-    public static Class<?>[] objectToClassArray(Object[] objects) {
+    static Class<?>[] objectToClassArray(Object[] objects) {
         Class<?>[] strings = new Class<?>[objects.length]
         for (int i = 0; i < objects.length; i++) {
             strings[i] = objects[i]?.getClass()
