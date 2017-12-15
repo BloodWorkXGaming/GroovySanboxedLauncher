@@ -1,6 +1,10 @@
 package de.bloodworkxgaming.groovysandboxedlauncher.defaults
 
+import de.bloodworkxgaming.groovysandboxedlauncher.annotations.GSLWhitelistClass
+import de.bloodworkxgaming.groovysandboxedlauncher.annotations.GSLWhitelistConstructor
+import de.bloodworkxgaming.groovysandboxedlauncher.annotations.GSLWhitelistMember
 import de.bloodworkxgaming.groovysandboxedlauncher.sandbox.WhitelistRegistry
+import groovy.transform.BaseScript
 import groovy.transform.CompileStatic
 
 @CompileStatic
@@ -8,6 +12,12 @@ class WhitelistDefaults {
     static void registerWhitelistMethodDefaults(WhitelistRegistry registry) {
 
         registry.with {
+            // ----------- Annotations ----------------------
+            registerAnnotation(GSLWhitelistClass)
+            registerAnnotation(GSLWhitelistConstructor)
+            registerAnnotation(GSLWhitelistMember)
+            registerAnnotation(BaseScript)
+
             // ------------- Script natives ------------------
             registerMethod(Script.class, "println")
             registerMethod(Script.class, "print")
@@ -43,8 +53,6 @@ class WhitelistDefaults {
 
             // ----------- Useful helper classes -------
             registerAllMethodsAndFields(Math.class)
-
-
         }
 
     }

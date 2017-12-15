@@ -54,7 +54,7 @@ class DefaultValueAssigner {
                     objects.add(0)
                     break
                 case boolean:
-                    objects.add(false);
+                    objects.add(false)
                     break
                 case char:
                     objects.add('\u0000')

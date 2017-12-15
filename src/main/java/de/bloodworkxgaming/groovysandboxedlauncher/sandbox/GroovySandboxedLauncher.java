@@ -62,7 +62,7 @@ public class GroovySandboxedLauncher {
 
         compilationCustomizers.add(new SandboxTransformer());
         compilationCustomizers.add(importModifier.getImportCustomizer());
-        compilationCustomizers.add(new ClassFunctionWhitelistAnnotatorTransformer());
+        compilationCustomizers.add(new ClassFunctionWhitelistAnnotatorTransformer(this));
 
         PreprocessorManager.registerOwnPreprocessors(preprocessorManager);
 

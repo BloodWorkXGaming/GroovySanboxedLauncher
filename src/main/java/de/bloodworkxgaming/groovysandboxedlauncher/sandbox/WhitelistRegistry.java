@@ -1,5 +1,6 @@
 package de.bloodworkxgaming.groovysandboxedlauncher.sandbox;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.*;
 
@@ -16,6 +17,7 @@ public class WhitelistRegistry {
     private Map<String, Set<String>> allowedFields = new HashMap<>();
     private Set<String> allowedConstructorCalls = new HashSet<>();
     private Set<String> allowedObjectExistence = new HashSet<>();
+    private Set<String> allowedAnnotations = new HashSet<>();
 
     //region >>>> Method Whitelist
 
@@ -246,6 +248,14 @@ public class WhitelistRegistry {
         return invertFieldWhitelist;
     }
     //endregion
+
+    public void registerAnnotation(Class<? extends Annotation> annotation){
+        allowedAnnotations.add(annotation.getName());
+    }
+
+    public boolean isAnnotationWhitelisted(String annotation){
+        return allowedAnnotations.contains(annotation);
+    }
 
     public void registerAllMethodsAndFields(Class clazz) {
         registerWildCardMethod(clazz);

@@ -3,6 +3,8 @@ package de.bloodworkxgaming.groovysandboxedlauncher.compilercustomizer
 import de.bloodworkxgaming.groovysandboxedlauncher.annotations.GSLWhitelistClass
 import de.bloodworkxgaming.groovysandboxedlauncher.annotations.GSLWhitelistConstructor
 import de.bloodworkxgaming.groovysandboxedlauncher.annotations.GSLWhitelistMember
+import de.bloodworkxgaming.groovysandboxedlauncher.sandbox.GroovySandboxedLauncher
+import de.bloodworkxgaming.groovysandboxedlauncher.sandbox.WhitelistRegistry
 import org.codehaus.groovy.ast.AnnotationNode
 import org.codehaus.groovy.ast.ClassNode
 import org.codehaus.groovy.classgen.GeneratorContext
@@ -14,8 +16,11 @@ import java.lang.annotation.Annotation
 
 class ClassFunctionWhitelistAnnotatorTransformer extends CompilationCustomizer {
 
-    ClassFunctionWhitelistAnnotatorTransformer() {
+    private GroovySandboxedLauncher launcher
+
+    ClassFunctionWhitelistAnnotatorTransformer(GroovySandboxedLauncher launcher) {
         super(CompilePhase.CANONICALIZATION)
+        this.launcher = launcher
     }
 
     @Override
@@ -54,6 +59,14 @@ class ClassFunctionWhitelistAnnotatorTransformer extends CompilationCustomizer {
         classNode?.innerClasses?.each {
             addAnnotationToClass(it, GSLWhitelistConstructor)
             addAnnotationToClass(it, GSLWhitelistClass)
+        }
+
+        classNode?.annotations?.each {
+            println "annotation: ${it.getClassNode().getName()}"
+            if (!launcher.whitelistRegistry.isAnnotationWhitelisted(it.getClassNode().getName())){
+                GroovySandboxedLauncher.LOGGER.logError("The Annotation [${it.getClassNode().getName()}] is not allowed to be used in Scripts!")
+                throw new SecurityException("The Annotation [${it.getClassNode().getName()}] is not allowed to be used in Scripts!")
+            }
         }
     }
 
