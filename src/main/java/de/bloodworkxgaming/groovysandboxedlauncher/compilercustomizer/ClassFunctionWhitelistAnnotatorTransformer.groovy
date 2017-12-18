@@ -62,7 +62,6 @@ class ClassFunctionWhitelistAnnotatorTransformer extends CompilationCustomizer {
         }
 
         classNode?.annotations?.each {
-            println "annotation: ${it.getClassNode().getName()}"
             if (!launcher.whitelistRegistry.isAnnotationWhitelisted(it.getClassNode().getName())){
                 GroovySandboxedLauncher.LOGGER.logError("The Annotation [${it.getClassNode().getName()}] is not allowed to be used in Scripts!")
                 throw new SecurityException("The Annotation [${it.getClassNode().getName()}] is not allowed to be used in Scripts!")
