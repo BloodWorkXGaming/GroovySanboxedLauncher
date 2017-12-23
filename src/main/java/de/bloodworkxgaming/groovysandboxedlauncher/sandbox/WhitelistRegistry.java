@@ -40,7 +40,7 @@ public class WhitelistRegistry {
     }
 
     public void registerWildCardMethodWithoutClass(String functionName, boolean wildcardArguments, Class<?>... arguments) {
-        allowedMethods.add(new WhiteListedMethod(null, true, functionName, false, wildcardArguments, arguments));
+        allowedMethods.add(new WhiteListedMethod(Object.class, true, functionName, false, wildcardArguments, arguments));
     }
 
 
