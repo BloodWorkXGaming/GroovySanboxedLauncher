@@ -6,6 +6,7 @@ import de.bloodworkxgaming.groovysandboxedlauncher.annotations.GSLWhitelistMembe
 import de.bloodworkxgaming.groovysandboxedlauncher.sandbox.WhitelistRegistry
 import groovy.transform.BaseScript
 import groovy.transform.CompileStatic
+import org.codehaus.groovy.runtime.GStringImpl
 
 @CompileStatic
 class WhitelistDefaults {
@@ -45,6 +46,8 @@ class WhitelistDefaults {
             registerAllMethodsAndFields(Byte.class)
             registerAllMethodsAndFields(Double.class)
             registerAllMethodsAndFields(Float.class)
+
+            registerAllMethodsAndFields(GString.class)
 
             //registerMethod(Object.class, "toString")
             registerWildCardMethodWithoutClass("toString", false)
