@@ -99,8 +99,7 @@ class CustomValueFilter extends GroovyValueFilter {
             clazz = receiver.getClass()
         }
 
-        if (DEBUG) println("[PROPERTY GET] ${clazz}.$property")
-
+        if (DEBUG) println("[PROPERTY GET] ${clazz} : $property")
 
         if (whitelistRegistry.isFieldWhitelisted(clazz, property) || AnnotationManager.checkHasFieldAnnotation(clazz, property) || checkImplicitFieldWhitelisted(clazz, property, true)) {
             return super.onGetProperty(invoker, receiver, property)

@@ -25,6 +25,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.text.DecimalFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -35,6 +36,7 @@ public class GroovySandboxedLauncher {
     public static boolean DEBUG = false;
     public static final LogManager LOG_MANAGER = new LogManager();
     public static final ILogger LOGGER = new CombineLogger(LOG_MANAGER);
+    public static final DecimalFormat DF = new DecimalFormat("#.##");
     static {
         LOG_MANAGER.registerLogger(LogManager.logger);
     }
@@ -93,12 +95,16 @@ public class GroovySandboxedLauncher {
      * Loads all scripts in the given paths
      */
     public void loadScripts() {
+        long timeStart = System.nanoTime();
         resetAllToDefault();
-        collectScripts();
+        collectScriptsRecoursive();
         preprocessorManager.checkFilesForPreprocessors(gslScriptFiles);
 
         gslScriptFiles.sort(PreprocessorManager.SCRIPT_FILE_COMPARATOR);
 
+        List<GSLScriptFile> rejectedFiles = new ArrayList<>();
+
+        // Loading the scripts normally
         for (GSLScriptFile gslScriptFile : gslScriptFiles) {
             if (gslScriptFile.isValidGroovyFile()) {
                 if (gslScriptFile.isScriptCreationBlocked()) {
@@ -112,16 +118,12 @@ public class GroovySandboxedLauncher {
                         Script script = scriptEngine.createScript(gslScriptFile.getName(), binding);
                         gslScriptFile.setScript(script);
 
-                    }catch (Exception e){
-                        System.out.println("gslScriptFile = " + e);
-                        e.printStackTrace();
-                        throw e;
+                    } catch (Exception e){
+                        LOGGER.logWarning("Script " + gslScriptFile.toString() + " got rejected due to " + e.getMessage() + ", trying again later.");
+                        rejectedFiles.add(gslScriptFile);
+                        if(DEBUG) LOGGER.logError("full stack: ", e);
                     }
 
-                } catch (ResourceException e) {
-                    GroovySandboxedLauncher.LOGGER.logError("Error while reading the file", e);
-                } catch (ScriptException e) {
-                    e.printStackTrace();
                 } catch (GroovyBugError e) {
                     GroovySandboxedLauncher.LOGGER.logError(gslScriptFile.getName() + " couldn't get compiled because some function is not allowed: " + e.getMessage(), e);
                 } catch (GroovyRuntimeException e) {
@@ -134,13 +136,26 @@ public class GroovySandboxedLauncher {
             }
         }
 
+        // Trying everything again after it failed once
+        for (GSLScriptFile rejectedFile : rejectedFiles) {
+            try {
+                GroovySandboxedLauncher.LOGGER.logInfo("Loading groovy script " + rejectedFile + " for a second attempt.");
+                Script script = scriptEngine.createScript(rejectedFile.getName(), binding);
+                rejectedFile.setScript(script);
+            } catch (Exception e){
+                LOGGER.logError("Script " + rejectedFile.toString() + " failed on the second attempt as well (try using the priority preprocessor): ", e);
+            }
+        }
+
         functionKnower.extractMethods(gslScriptFiles);
         if (DEBUG) functionKnower.dumpMap();
+
+        LOGGER.logInfo("Finished loading scripts in " + DF.format((System.nanoTime() - timeStart)/1.0e6) + "ms.");
     }
 
-    // Don't use this unless there is a specific reason you need all of them
-    // Will cause the scriptengine to crash as it doesn't know about the subfolders
-    @Deprecated
+    /**
+     * Collects all the scripts in all the subfolders, may cause issues when it is not in the right order, but not sure how to sort for that
+     */
     private void collectScriptsRecoursive() {
         gslScriptFiles.clear();
         for (File path : scriptPathConfig.getScriptPathRoots()) {
@@ -155,13 +170,17 @@ public class GroovySandboxedLauncher {
                 for (Path scriptPath : pathList) {
                     File file = scriptPath.toFile();
                     if (file.isFile()) {
-                        gslScriptFiles.add(new GSLScriptFile(file, file.getName()));
+                        String s = path.toPath().relativize(file.toPath()).toString();
+                        gslScriptFiles.add(new GSLScriptFile(file, s));
                     }
                 }
             }
         }
     }
 
+    /**
+     * Only loads the scripts in the flat roots, no subfolders
+     */
     private void collectScripts() {
         gslScriptFiles.clear();
         for (File path : scriptPathConfig.getScriptPathRoots()) {
@@ -189,6 +208,7 @@ public class GroovySandboxedLauncher {
      * here the lowest scripts stuff is getting run
      */
     public void runAllScripts() {
+        long timeStart = System.nanoTime();
         resetAllToDefault();
 
         for (GSLScriptFile gslScriptFile : functionKnower.getImplementingScripts("main", 1)) {
@@ -202,7 +222,7 @@ public class GroovySandboxedLauncher {
             }
         }
 
-
+        LOGGER.logInfo("Finished executing scripts in " + DF.format((System.nanoTime() - timeStart)/1.0e6) + "ms.");
     }
 
     public void runFunctionAll(String name, Object... args) {
